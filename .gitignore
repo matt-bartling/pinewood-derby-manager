@@ -1,2 +1,10 @@
-/**/obj
-/**/bin
+/PinewoodDerby/obj
+/PinewoodDerby/bin
+/PinewoodDerby.Dto/obj
+/PinewoodDerby.Dto/bin
+/PinewoodDerby.Dto.Tests/bin
+/PinewoodDerby.Dto.Tests/obj
+/Utils/bin
+/Utils/obj
+*.suo
+*.user
