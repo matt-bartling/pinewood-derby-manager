@@ -8,3 +8,4 @@
 /Utils/obj
 *.suo
 *.user
+/PinewoodDerby/*.user
