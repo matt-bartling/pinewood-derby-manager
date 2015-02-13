@@ -1,0 +1,72 @@
+﻿@import 'colors.less';
+
+#race-results {
+    position: absolute;
+    bottom: 0;
+    height: 12%;
+    left: 0px;
+    width: 100%;
+    background-color: black;
+    border: 5px solid lighten(black, 10%);
+    .race {
+        margin-top: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        border: 2px solid lighten(black, 20%);
+        height: 45px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 10px;
+        
+        .race-title {
+            margin-left: 20px;
+            float:left;
+            padding: 10px;
+            width:18%;
+            color: ghostwhite;
+            left: 10%;
+        }
+
+        .car {
+            position: relative;
+            padding: 9px;
+            float: left;
+            width:20%;
+            color: black;
+            border: solid 2px black;
+            border-radius: 10px;
+        }
+
+        .place-1 {
+            background-color: @first-place-gold;
+        }
+
+        .place-2 {
+            background-color: @second-place-silver;
+        }
+
+        .place-3 {
+            background-color: @third-place-bronze;
+        }
+
+        .place-4 {
+            background-color: @fourth-place-blue;
+        }
+
+        .lane-1 {
+            background-color: @lane-1-red;
+        }
+
+        .lane-2 {
+            background-color: @lane-2-yellow;
+        }
+
+        .lane-3 {
+            background-color: @lane-3-blue;
+        }
+
+        .lane-4 {
+            background-color: @lane-4-green;
+        }
+    }
+}

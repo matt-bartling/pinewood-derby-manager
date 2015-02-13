@@ -1,0 +1,58 @@
+﻿#standings {
+  position: absolute;
+  top: 300px;
+  left: 400px;
+  width: 70%;
+  height: 495px;
+  background-color: #0d0d0d;
+  border: solid 5px #1a1a1a;
+  text-align: center;
+  font-size: small;
+  color: white;
+}
+#standings table {
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#standings table th,
+#standings table td {
+  text-align: center;
+}
+#standings .group-title {
+  font-size: medium;
+  font-weight: bold;
+  margin: 10px;
+}
+#standings .standings-row {
+  position: relative;
+  left: 0;
+  text-align: left;
+}
+#standings td.number {
+  text-align: right;
+}
+#standings .control {
+  position: absolute;
+  bottom: 65px;
+  width: 100%;
+}
+#standings .control .btn-left,
+#standings .control .btn-right {
+  color: #0d0d0d;
+  top: -50px;
+  position: absolute;
+  color: white;
+  opacity: 0.1;
+}
+#standings .control .btn-left:hover,
+#standings .control .btn-right:hover {
+  opacity: 1.0;
+}
+#standings .control .btn-left {
+  left: 20px;
+}
+#standings .control .btn-right {
+  right: 20px;
+}
+/*# sourceMappingURL=standings.css.map */

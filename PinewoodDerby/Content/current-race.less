@@ -1,0 +1,133 @@
+﻿@import 'colors.less';
+@background-color: black;
+
+#current-race {
+    position: absolute;
+    top: 0;
+    left: 400px;
+    width: 70%;
+    height: 300px;
+    background-color: @background-color;
+    border: solid 5px lighten(black, 10%);
+    text-align: center;
+    font-size: x-large;
+
+    .race {
+        .race-title {
+            background-color: black;
+            padding: 10px;
+            color: ghostwhite;
+        }
+
+        .lane-1,
+        .lane-2,
+        .lane-3,
+        .lane-4 {
+            cursor: pointer;
+            position: relative;
+            font-size: large;
+            font-weight: bolder;
+            color: black;
+            height: 140px;
+            width: 25%;
+            float: left;
+            border: 5px solid lighten(black, 10%);
+            border-radius: 25px;
+            text-shadow: 2px 2px white;
+
+            .race-place-first,
+            .race-place-second,
+            .race-place-third,
+            .race-place-fourth {
+                position: relative;
+                height: 60px;
+                width: 60px;
+                margin: auto;
+                color: black;
+                border-radius: 50px;
+
+                span {
+                    position: relative;
+                    top: 12px;
+                    left: -1px;
+                }
+            }
+
+            .race-place-first {
+                background-color: @first-place-gold;
+            }
+
+            .race-place-second {
+                background-color: @second-place-silver;
+            }
+
+            .race-place-third {
+                background-color: @third-place-bronze;
+            }
+
+            .race-place-fourth {
+                background-color: @fourth-place-blue;
+            }
+        }
+
+        .lane-1 {
+            background-color: @lane-1-red;
+        }
+
+        .lane-2 {
+            background-color: @lane-2-yellow;
+        }
+
+        .lane-3 {
+            background-color: @lane-3-blue;
+        }
+
+        .lane-4 {
+            background-color: @lane-4-green;
+        }
+    }
+
+    .control {
+        position: relative;
+        background-color: black;
+        height: 100%;
+        width: 100%;
+        clear: both;
+
+        button {
+            margin: 20px;
+        }
+
+        .save-button {
+            position: absolute;
+            top: 0px;
+            left: 52%;
+        }
+
+        .clear-button {
+            position: absolute;
+            top: 0px;
+            right: 52%;
+        }
+
+        .btn-left,
+        .btn-right {
+            opacity: 0.1;
+            color: white;
+            position: absolute;
+            top: 20px;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .btn-left {
+            left: 20px;
+        }
+
+        .btn-right {
+            right: 20px;
+        }
+    }
+}

@@ -1,0 +1,67 @@
+﻿@import 'colors.less';
+
+#upcoming-races-pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 400px;
+    background-color: #101010;
+    border: 5px solid #303030;
+    padding-top: 20px;
+    text-align: center;
+    color: ghostwhite;
+    font-weight: bold;
+
+    .title {
+        text-align: center;
+    }
+
+    .race {
+        margin: 15px;
+        padding: 0px;
+        background-color: #303050;
+        border-radius: 10px;
+        position: relative;
+        height: 160px;
+        border: 5px solid lighten(black, 10%);
+        font-size: small;
+
+        .race-title {
+            padding: 10px;
+        }
+
+        .lane-1,
+        .lane-2,
+        .lane-3,
+        .lane-4 {
+            padding-left: 15px;
+            text-align: left;
+            color: black;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-top: solid 1px black;
+            border-radius: 10px;
+        }
+
+        .lane-1 {
+            background-color: @lane-1-red;
+            top: 10px;
+        }
+
+        .lane-2 {
+            background-color: @lane-2-yellow;
+            top: 50px;
+        }
+
+        .lane-3 {
+            background-color: @lane-3-blue;
+            top: 90px;
+        }
+
+        .lane-4 {
+            background-color: @lane-4-green;
+            top: 130px;
+        }
+    }
+}
