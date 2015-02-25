@@ -72,6 +72,12 @@
     <Content Include="Races\Heavyweight\races.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Races\Finals\cars.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Races\Finals\races.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PinewoodDerby.Dto\PinewoodDerby.Dto.csproj">

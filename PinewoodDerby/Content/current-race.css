@@ -122,12 +122,12 @@
 #current-race .control .save-button {
   position: absolute;
   top: 0px;
-  left: 52%;
+  left: 50%;
 }
 #current-race .control .clear-button {
   position: absolute;
   top: 0px;
-  right: 52%;
+  right: 50%;
 }
 #current-race .control .btn-left,
 #current-race .control .btn-right {

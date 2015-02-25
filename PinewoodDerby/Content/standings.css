@@ -37,16 +37,14 @@
   bottom: 65px;
   width: 100%;
 }
-#standings .control .btn-left,
-#standings .control .btn-right {
+#standings .control .btn {
   color: #0d0d0d;
-  top: -50px;
+  top: -25px;
   position: absolute;
   color: white;
   opacity: 0.1;
 }
-#standings .control .btn-left:hover,
-#standings .control .btn-right:hover {
+#standings .control .btn:hover {
   opacity: 1.0;
 }
 #standings .control .btn-left {

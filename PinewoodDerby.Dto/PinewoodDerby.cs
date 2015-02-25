@@ -16,6 +16,7 @@ namespace PinewoodDerby.Dto
     {
         public string Name { get; set; }
         public Car[] Cars { get; set; }
+        public bool ShowClassStandings { get; set; }
     }
 
     [TypeScriptModule("pinewoodderby")]
@@ -40,6 +41,7 @@ namespace PinewoodDerby.Dto
         public string ID { get; set; }
         public string Builder { get; set; }
         public string Name { get; set; }
+        public string Class { get; set; }
 
         public void Fill(string[] strings)
         {
@@ -47,7 +49,14 @@ namespace PinewoodDerby.Dto
             ID = strings[1];
             Builder = strings[2];
             Name = strings[3];
+            Class = strings.Length > 4 ? strings[4] : "";
         }
+    }
+
+    [TypeScriptModule("pinewoodderby")]
+    public class AvailableTournaments
+    {
+        public string[] Names { get; set; }
     }
 
     public class GroupRacesDefinition : IFromCsv

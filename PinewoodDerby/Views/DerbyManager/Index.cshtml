@@ -3,51 +3,90 @@
 }
 
 <div id="mainContent">
-    <div id="upcoming-races-pane">
-        <div id="upcoming-races-container">
-            <span class="title panel-title">Upcoming Races</span>
-            <!-- ko foreach: NextFourRaces() -->
-            <div class="race">
-                <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
-                <div class="lane-1" data-bind="with: Car1">Lane 1: @Result_Car()</div>
-                <div class="lane-2" data-bind="with: Car2">Lane 2: @Result_Car()</div>
-                <div class="lane-3" data-bind="with: Car3">Lane 3: @Result_Car()</div>
-                <div class="lane-4" data-bind="with: Car4">Lane 4: @Result_Car()</div>
-            </div>
-            <!-- /ko -->
+    <div id="navbar" class=" navbar-inverse navbar-fixed-top">
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger pull-right"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown dropdown-submenu">
+                            <a href="#">Load Tournament</a>
+                            <ul class="dropdown dropdown-menu">
+                                <!-- ko foreach: AvailableTournaments() -->
+                                <li>
+                                    <a href="#" data-bind="text: $data, click: function() { $root.Tournament_Pick($data); }"></a>
+                                </li>
+                                <!-- /ko -->
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
-    <div id="current-race">
-        <div id="current-race-container">
-            <!-- ko if: CurrentRace() != null-->
-            <div class="race" data-bind="with: CurrentRace()">
-                <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - Group: ' + Group"></div>
-                <div class="lane-1" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
-                <div class="lane-2" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
-                <div class="lane-3" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
-                <div class="lane-4" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
+    <div class="modal fade" id="tournament-picker-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Pick Tournament</h3>
+                </div>
+                <div class="modal-body">
+                    <!-- ko foreach: AvailableTournaments() -->
+                    <div data-bind="text: $data"></div>
+                    <!-- /ko -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="control">
-                <button class="clear-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_ClearPlaces(); }">Clear</button>
-                <button class="save-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_Save(); }, enable: $root.CurrentRace_AllPlacesSelected()">Save</button>
-                <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.CurrentRace_PrevRace(); }"><i class="icon-prev"></i></div>
-                <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.CurrentRace_NextRace(); }"></div>
-            </div>
-            <!-- /ko -->
-            <!-- ko if: CurrentRace() == null -->
-            <div class="race">
-                <div class="race-title">All Races Completed</div>
-            </div>
-            <!-- /ko -->
         </div>
     </div>
-    <div id="standings">
-        <div id="standings-container">
-            <!-- ko if: DisplayedGroup() != null -->
-            <div data-bind="with: DisplayedGroup()">
-                <div class="group-title" data-bind="text: Name"></div>
-                <table class="table table-condensed">
-                    <thead>
+    <div id="body-content" class="body-content">
+        <div id="upcoming-races-pane">
+            <div id="upcoming-races-container">
+                <span class="title panel-title">Upcoming Races</span>
+                <!-- ko foreach: NextFourRaces() -->
+                <div class="race">
+                    <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
+                    <div class="lane-1" data-bind="with: Car1">Lane 1: @Result_Car()</div>
+                    <div class="lane-2" data-bind="with: Car2">Lane 2: @Result_Car()</div>
+                    <div class="lane-3" data-bind="with: Car3">Lane 3: @Result_Car()</div>
+                    <div class="lane-4" data-bind="with: Car4">Lane 4: @Result_Car()</div>
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+        <div id="current-race">
+            <div id="current-race-container">
+                <!-- ko if: CurrentRace() != null-->
+                <div class="race" data-bind="with: CurrentRace()">
+                    <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - Group: ' + Group"></div>
+                    <div class="lane-1" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
+                    <div class="lane-2" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
+                    <div class="lane-3" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
+                    <div class="lane-4" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
+                </div>
+                <div class="control">
+                    <button class="clear-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_ClearPlaces(); }">Clear</button>
+                    <button class="save-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_Save(); }, enable: $root.CurrentRace_AllPlacesSelected()">Save</button>
+                    <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.CurrentRace_PrevRace(); }"><i class="icon-prev"></i></div>
+                    <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.CurrentRace_NextRace(); }"></div>
+                </div>
+                <!-- /ko -->
+                <!-- ko if: CurrentRace() == null -->
+                <div class="race">
+                    <div class="race-title">All Races Completed</div>
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+        <div id="standings">
+            <div id="standings-container" data-bind="with: CurrentStandingsPageInfo()">
+                <div data-bind="if: !$data.ShowLaneStats">
+                    <div class="group-title" data-bind="text: Title()"></div>
+                    <table class="table table-condensed">
+                        <thead>
                         <th style="width: 50px;">Place</th>
                         <th style="width: 200px;">Car</th>
                         <th style="width: 50px;">Total</th>
@@ -57,52 +96,77 @@
                         <th style="width: 50px;">4th</th>
                         <th style="width: 50px;">Remaining</th>
                         <th style="width: 50px;">Points</th>
-                    </thead>
-                    <tbody data-bind="foreach: $root.GroupStandings()">
-                        <tr class="standings-row">
-                            <td data-bind="text: Place"></td>
-                            <td data-bind="text: '#' + Car.Number + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
-                            <td data-bind="text: TotalRaces"></td>
-                            <td data-bind="text: FirstPlaceFinishes"></td>
-                            <td data-bind="text: SecondPlaceFinishes"></td>
-                            <td data-bind="text: ThirdPlaceFinishes"></td>
-                            <td data-bind="text: FourthPlaceFinishes"></td>
-                            <td data-bind="text: RacesRemaining"></td>
-                            <td data-bind="text: Points"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody data-bind="foreach: $root.GroupStandings()">
+                            <tr class="standings-row">
+                                <td data-bind="text: Place"></td>
+                                <td data-bind="text: '#' + Car.Number + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
+                                <td data-bind="text: TotalRaces"></td>
+                                <td data-bind="text: FirstPlaceFinishes"></td>
+                                <td data-bind="text: SecondPlaceFinishes"></td>
+                                <td data-bind="text: ThirdPlaceFinishes"></td>
+                                <td data-bind="text: FourthPlaceFinishes"></td>
+                                <td data-bind="text: RacesRemaining"></td>
+                                <td data-bind="text: Points"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: $data.ShowLaneStats">
+                    <div class="group-title">Lane Stats</div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <th style="width: 200px;">Car</th>
+                        <th style="width: 50px;">1st</th>
+                        <th style="width: 50px;">2nd</th>
+                        <th style="width: 50px;">3rd</th>
+                        <th style="width: 50px;">4th</th>
+                        <th style="width: 50px;">Points</th>
+                        </thead>
+                        <tbody data-bind="foreach: $root.LaneStats()">
+                            <tr class="standings-row">
+                                <td data-bind="text: Lane"></td>
+                                <td data-bind="text: FirstPlaceFinishes"></td>
+                                <td data-bind="text: SecondPlaceFinishes"></td>
+                                <td data-bind="text: ThirdPlaceFinishes"></td>
+                                <td data-bind="text: FourthPlaceFinishes"></td>
+                                <td data-bind="text: Points"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <!-- /ko -->
+            <div class="control">
+                <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.Standings_PrevPage(); }"></div>
+                <div class="btn-lg btn glyphicon glyphicon-pause" data-bind="click: function() { $root.Standings_Pause(); }, visible: !$root.StandingsPaused()"></div>
+                <div class="btn-lg btn glyphicon glyphicon-play" data-bind="click: function() { $root.Standings_Play(); }, visible: $root.StandingsPaused()"></div>
+                <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.Standings_NextPage(); }"></div>
+            </div>
         </div>
-        <div class="control">
-            <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.Standings_PrevPage(); }"></div>
-            <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.Standings_NextPage(); }"></div>
-        </div>
-    </div>
-    <div id="race-results">
-        <div id="race-result">
-            <!-- ko foreach: DisplayedRaceResult() -->
-            <div class="race" data-bin="with: DisplayedRaceResult(), visible: DisplayedRaceResult() != null">
-                <!-- ko if: $root.IsRaceCompleted($data) -->
-                <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span> / Final</div>
-                <div class="place-1 car" data-bind="with: First">1st: @Result_Car()</div>
-                <div class="place-2 car" data-bind="with: Second">2nd: @Result_Car()</div>
-                <div class="place-3 car" data-bind="with: Third">3rd: @Result_Car()</div>
-                <div class="place-4 car" data-bind="with: Fourth">4th: @Result_Car()</div>
-                <!-- /ko -->
-                <!-- ko if: !$root.IsRaceCompleted($data) -->
-                <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
-                <div class="lane-1 car" data-bind="with: Car1">Lane 1: @Result_Car()</div>
-                <div class="lane-2 car" data-bind="with: Car2">Lane 2: @Result_Car()</div>
-                <div class="lane-3 car" data-bind="with: Car3">Lane 3: @Result_Car()</div>
-                <div class="lane-4 car" data-bind="with: Car4">Lane 4: @Result_Car()</div>
+        <div id="race-results">
+            <div id="race-result">
+                <!-- ko foreach: DisplayedRaceResult() -->
+                <div class="race" data-bin="with: DisplayedRaceResult(), visible: DisplayedRaceResult() != null">
+                    <!-- ko if: $root.IsRaceCompleted($data) -->
+                    <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span> / Final</div>
+                    <div class="place-1 car" data-bind="with: First">1st: @Result_Car()</div>
+                    <div class="place-2 car" data-bind="with: Second">2nd: @Result_Car()</div>
+                    <div class="place-3 car" data-bind="with: Third">3rd: @Result_Car()</div>
+                    <div class="place-4 car" data-bind="with: Fourth">4th: @Result_Car()</div>
+                    <!-- /ko -->
+                    <!-- ko if: !$root.IsRaceCompleted($data) -->
+                    <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
+                    <div class="lane-1 car" data-bind="with: Car1">Lane 1: @Result_Car()</div>
+                    <div class="lane-2 car" data-bind="with: Car2">Lane 2: @Result_Car()</div>
+                    <div class="lane-3 car" data-bind="with: Car3">Lane 3: @Result_Car()</div>
+                    <div class="lane-4 car" data-bind="with: Car4">Lane 4: @Result_Car()</div>
+                    <!-- /ko -->
+                </div>
                 <!-- /ko -->
             </div>
-            <!-- /ko -->
         </div>
-    </div>
 
+    </div>
 </div>
 
 @helper CurrentRaceCar()
@@ -125,7 +189,7 @@
 {
     <script src="~/Scripts/Common/customBindings.js"></script>
     <script type="text/javascript">
-        require(["Scripts/views/derbymanager"], function(module) {
+        require(["Scripts/views/derbymanager"], function (module) {
             var viewModel = new module.ViewModel('@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")');
         });
     </script>

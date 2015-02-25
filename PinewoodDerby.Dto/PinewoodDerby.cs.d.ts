@@ -7,6 +7,7 @@
 	interface Group {
 		Name: string;
 		Cars: pinewoodderby.Car[];
+		ShowClassStandings: boolean;
 	}
 	interface Race {
 		Group: string;
@@ -25,6 +26,10 @@
 		ID: string;
 		Builder: string;
 		Name: string;
+		Class: string;
+	}
+	interface AvailableTournaments {
+		Names: string[];
 	}
 }
 declare module server {
