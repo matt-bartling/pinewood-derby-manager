@@ -100,7 +100,7 @@
                         <tbody data-bind="foreach: $root.GroupStandings()">
                             <tr class="standings-row">
                                 <td data-bind="text: Place"></td>
-                                <td data-bind="text: '#' + Car.Number + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
+                                <td data-bind="text: Car.ID + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
                                 <td data-bind="text: TotalRaces"></td>
                                 <td data-bind="text: FirstPlaceFinishes"></td>
                                 <td data-bind="text: SecondPlaceFinishes"></td>

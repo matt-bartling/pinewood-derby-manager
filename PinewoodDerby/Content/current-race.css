@@ -47,6 +47,7 @@
 #current-race .race .lane-3 .race-place-fourth,
 #current-race .race .lane-4 .race-place-fourth {
   position: relative;
+  top: 5px;
   height: 60px;
   width: 60px;
   margin: auto;
@@ -70,7 +71,7 @@
 #current-race .race .lane-3 .race-place-fourth span,
 #current-race .race .lane-4 .race-place-fourth span {
   position: relative;
-  top: 12px;
+  top: 15px;
   left: -1px;
 }
 #current-race .race .lane-1 .race-place-first,

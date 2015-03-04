@@ -35,5 +35,31 @@ namespace PinewoodDerby.Dto.Tests
                 JsonConvert.SerializeObject(tournament, Formatting.Indented));
             Console.WriteLine(JsonConvert.SerializeObject(tournament, Formatting.Indented));
         }
+
+        [Test]
+        public void BuildTwoCarPlayoff()
+        {
+            var tournamentName = "2 Car Playoff";
+            var builder = new TournamentBuilder(tournamentName, @".\Races");
+            builder.AddGroup("2CarPlayoff");
+            var tournament = builder.Build();
+            Directory.CreateDirectory(Path.Combine(@"C:/Tournaments", tournamentName));
+            File.WriteAllText(Path.Combine(@"C:/Tournaments", tournamentName, "tournament.json"),
+                JsonConvert.SerializeObject(tournament, Formatting.Indented));
+            Console.WriteLine(JsonConvert.SerializeObject(tournament, Formatting.Indented));
+        }
+
+        [Test]
+        public void BuildThreeCarPlayoff()
+        {
+            var tournamentName = "Tiger Playoff";
+            var builder = new TournamentBuilder(tournamentName, @".\Races");
+            builder.AddGroup("3CarPlayoff", "Tiger Playoff");
+            var tournament = builder.Build();
+            Directory.CreateDirectory(Path.Combine(@"C:/Tournaments", tournamentName));
+            File.WriteAllText(Path.Combine(@"C:/Tournaments", tournamentName, "tournament.json"),
+                JsonConvert.SerializeObject(tournament, Formatting.Indented));
+            Console.WriteLine(JsonConvert.SerializeObject(tournament, Formatting.Indented));
+        }
     }
 }

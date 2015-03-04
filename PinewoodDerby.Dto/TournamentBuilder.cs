@@ -23,10 +23,21 @@ namespace PinewoodDerby.Dto
             _groups.Add(new Tuple<Group, GroupRacesDefinition[]>(group, races));
         }
 
-        public void AddGroup(string groupName, bool showClassStandings = false)
+        public void AddGroup(string folder, bool showClassStandings = false)
         {
-            var cars = CsvParser.ParseArray<Car>(Path.Combine(_baseGroupDirectory, groupName, "cars.csv"));
-            var races = CsvParser.ParseArray<GroupRacesDefinition>(Path.Combine(_baseGroupDirectory, groupName, "races.csv"));
+            _AddGroup(folder, folder, false);
+        }
+
+        public void AddGroup(string folder, string groupName, bool showClassStandings = false)
+        {
+            _AddGroup(folder, groupName, showClassStandings);
+        }
+
+        private void _AddGroup(string folder, string groupName = null, bool showClassStandings = false)
+        {
+            groupName = groupName ?? folder;
+            var cars = CsvParser.ParseArray<Car>(Path.Combine(_baseGroupDirectory, folder, "cars.csv"));
+            var races = CsvParser.ParseArray<GroupRacesDefinition>(Path.Combine(_baseGroupDirectory, folder, "races.csv"));
             var group = new Group {Cars = cars.ToArray(), Name = groupName, ShowClassStandings = showClassStandings};
             _groups.Add(new Tuple<Group, GroupRacesDefinition[]>(group, races.ToArray()));
         }

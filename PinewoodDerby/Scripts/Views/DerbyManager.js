@@ -236,8 +236,9 @@ define(["require", "exports"], function(require, exports) {
                 _this.AddLaneResult(r.Car3, r, lane3);
                 _this.AddLaneResult(r.Car4, r, lane4);
             });
-            console.log([lane1, lane2, lane3, lane4]);
-            return [lane1, lane2, lane3, lane4];
+            return Enumerable.From([lane1, lane2, lane3, lane4]).OrderByDescending(function (l) {
+                return l.Points;
+            }).ToArray();
         };
 
         ViewModel.prototype.AddLaneResult = function (laneCar, race, laneStats) {
@@ -297,6 +298,8 @@ define(["require", "exports"], function(require, exports) {
             this.CurrentRace().Third = this.Third();
             this.CurrentRace().Fourth = this.Fourth();
 
+            $('#current-race-container').css({ opacity: 0.5 });
+
             $.post(this.baseUrl + "api/derbymanager/savetournament", this.Tournament()).done(function () {
                 _this.SetNextRace();
                 _this.UpdateGroupStandings();
@@ -354,6 +357,7 @@ define(["require", "exports"], function(require, exports) {
                 _this.CurrentRace(nextRace);
                 _this.CurrentRace_ClearPlaces();
                 $('#current-race-container').fadeIn('fast', 'swing');
+                $('#current-race-container').css({ opacity: 1.0 });
             });
             $('#upcoming-races-container').fadeOut('fast', 'linear', function () {
                 var nextFourRaces = Enumerable.From(_this.Tournament().Races).Where(function (r) {
