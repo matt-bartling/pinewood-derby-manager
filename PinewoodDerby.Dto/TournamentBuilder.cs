@@ -62,10 +62,10 @@ namespace PinewoodDerby.Dto
                     var race = new Race
                     {
                         Group = group.Item1.Name,
-                        Car1 = carsByNumber[raceDef.Lane1],
-                        Car2 = carsByNumber[raceDef.Lane2],
-                        Car3 = carsByNumber[raceDef.Lane3],
-                        Car4 = carsByNumber[raceDef.Lane4],
+                        Car1 = new RaceResult{Car = carsByNumber[raceDef.Lane1]},
+                        Car2 = new RaceResult{Car = carsByNumber[raceDef.Lane2]},
+                        Car3 = new RaceResult{Car = carsByNumber[raceDef.Lane3]},
+                        Car4 = new RaceResult{Car = carsByNumber[raceDef.Lane4]},
                     };
                     races.Add(pctDone, race);
                 }

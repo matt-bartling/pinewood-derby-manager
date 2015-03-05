@@ -12,14 +12,15 @@
 	interface Race {
 		Group: string;
 		RaceNumber: number;
-		Car1: pinewoodderby.Car;
-		Car2: pinewoodderby.Car;
-		Car3: pinewoodderby.Car;
-		Car4: pinewoodderby.Car;
-		First: pinewoodderby.Car;
-		Second: pinewoodderby.Car;
-		Third: pinewoodderby.Car;
-		Fourth: pinewoodderby.Car;
+		Car1: pinewoodderby.RaceResult;
+		Car2: pinewoodderby.RaceResult;
+		Car3: pinewoodderby.RaceResult;
+		Car4: pinewoodderby.RaceResult;
+	}
+	interface RaceResult {
+		Car: pinewoodderby.Car;
+		Place: number;
+		Points: number;
 	}
 	interface Car {
 		Number: number;

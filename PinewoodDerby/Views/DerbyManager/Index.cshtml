@@ -149,10 +149,12 @@
                 <div class="race" data-bin="with: DisplayedRaceResult(), visible: DisplayedRaceResult() != null">
                     <!-- ko if: $root.IsRaceCompleted($data) -->
                     <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span> / Final</div>
-                    <div class="place-1 car" data-bind="with: First">1st: @Result_Car()</div>
-                    <div class="place-2 car" data-bind="with: Second">2nd: @Result_Car()</div>
-                    <div class="place-3 car" data-bind="with: Third">3rd: @Result_Car()</div>
-                    <div class="place-4 car" data-bind="with: Fourth">4th: @Result_Car()</div>
+                    <!-- ko foreach: Enumerable.From($root.RaceResults($data)).OrderBy(function (rr) { return rr.Place; } ).ToArray() -->
+                    <div class="place-1 car" data-bind="visible: $data.Place == 1">1st: @Result_Car()</div>
+                    <div class="place-2 car" data-bind="visible: $data.Place == 2">2nd: @Result_Car()</div>
+                    <div class="place-3 car" data-bind="visible: $data.Place == 3">3rd: @Result_Car()</div>
+                    <div class="place-4 car" data-bind="visible: $data.Place == 4">4th: @Result_Car()</div>
+                    <!-- /ko -->
                     <!-- /ko -->
                     <!-- ko if: !$root.IsRaceCompleted($data) -->
                     <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
@@ -171,16 +173,18 @@
 
 @helper CurrentRaceCar()
 {
-    <div data-bind="text: ID + ' - ' + Builder"></div>
-    <div data-bind="text: Name"></div>
-    <div class="race-place-first" data-bind="visible: $root.First() != null && $root.First().ID == $data.ID"><span>1st</span></div>
-    <div class="race-place-second" data-bind="visible: $root.Second() != null && $root.Second().ID == $data.ID"><span>2nd</span></div>
-    <div class="race-place-third" data-bind="visible: $root.Third() != null && $root.Third().ID == $data.ID"><span>3rd</span></div>
-    <div class="race-place-fourth" data-bind="visible: $root.Fourth() != null && $root.Fourth().ID == $data.ID"><span>4th</span></div>
+    <div data-bind="text: Car.ID + ' - ' + Car.Builder"></div>
+    <div data-bind="text: Car.Name"></div>
+    <!-- ko with: $root.LanePlace($data) -->
+    <div class="race-place-first" data-bind="visible: $data == 1"><span>1st</span></div>
+    <div class="race-place-second" data-bind="visible: $data == 2"><span>2nd</span></div>
+    <div class="race-place-third" data-bind="visible: $data == 3"><span>3rd</span></div>
+    <div class="race-place-fourth" data-bind="visible: $data == 4"><span>4th</span></div>
+    <!-- /ko -->
 }
 @helper Result_Car()
 {
-    @:<span data-bind="text: ID + ' - ' + Builder + ' - ' + Name">
+    @:<span data-bind="text: Car.ID + ' - ' + Car.Builder + ' - ' + Car.Name">
 }
 
 

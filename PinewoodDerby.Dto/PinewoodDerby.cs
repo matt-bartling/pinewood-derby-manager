@@ -24,14 +24,18 @@ namespace PinewoodDerby.Dto
     {
         public string Group { get; set; }
         public int RaceNumber { get; set; }
-        public Car Car1 { get; set; }
-        public Car Car2 { get; set; }
-        public Car Car3 { get; set; }
-        public Car Car4 { get; set; }
-        public Car First { get; set; }
-        public Car Second { get; set; }
-        public Car Third { get; set; }
-        public Car Fourth { get; set; }
+        public RaceResult Car1 { get; set; }
+        public RaceResult Car2 { get; set; }
+        public RaceResult Car3 { get; set; }
+        public RaceResult Car4 { get; set; }
+    }
+
+    [TypeScriptModule("pinewoodderby")]
+    public class RaceResult
+    {
+        public Car Car { get; set; }
+        public int Place { get; set; }
+        public int Points { get; set; }
     }
 
     [TypeScriptModule("pinewoodderby")]

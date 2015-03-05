@@ -18,10 +18,10 @@ define(["require", "exports"], function(require, exports) {
             this.GroupStandings = ko.observableArray([]);
             this.CurrentStandingsPageInfo = ko.observable(null);
             this.StandingsPaused = ko.observable(false);
-            this.First = ko.observable();
-            this.Second = ko.observable();
-            this.Third = ko.observable();
-            this.Fourth = ko.observable();
+            this.Lane1Place = ko.observable(0);
+            this.Lane2Place = ko.observable(0);
+            this.Lane3Place = ko.observable(0);
+            this.Lane4Place = ko.observable(0);
             this.CurrentStandingsPage = 0;
             this.StandingsPageSize = 10;
             this.baseUrl = baseUrl;
@@ -30,6 +30,18 @@ define(["require", "exports"], function(require, exports) {
                 ko.applyBindings(_this, document.getElementById('mainContent'));
                 _this.baseUrl = baseUrl;
                 _this.LoadTournament('Pack 125 - 2015');
+            });
+            $(document).keypress(function (event) {
+                var place = event.charCode - 48;
+                if (place < 1 || place > 4) {
+                    return;
+                }
+
+                if (_this.SelectedLane != null) {
+                    console.log(_this.SelectedLane());
+                    _this.SelectedLane(place);
+                    console.log(_this.SelectedLane());
+                }
             });
             setInterval(function () {
                 _this.SetNextResult();
@@ -157,7 +169,6 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ViewModel.prototype.UpdateGroupStandings = function () {
-            var _this = this;
             var pageInfo = this.StandingsPages[this.CurrentStandingsPage];
             var group = this.Tournament().Groups[pageInfo.GroupNumber];
             if (group == null || group.Cars == null) {
@@ -166,23 +177,26 @@ define(["require", "exports"], function(require, exports) {
             var results = [];
             var races = this.Tournament().Races;
             group.Cars.forEach(function (c) {
-                var racesWithCar = Enumerable.From(races).Where(function (r) {
-                    return _this.ContainsCar(r, c);
+                var raceResults = Enumerable.From(races).SelectMany(function (r) {
+                    return [r.Car1, r.Car2, r.Car3, r.Car4];
+                }).ToArray();
+                var resultsWithCar = Enumerable.From(raceResults).Where(function (rr) {
+                    return rr.Car.ID == c.ID;
                 }).ToArray();
                 var result = new GroupStandingsRow();
                 result.Car = c;
-                result.TotalRaces = racesWithCar.length;
-                result.FirstPlaceFinishes = Enumerable.From(racesWithCar).Count(function (r) {
-                    return r.First != null && r.First.ID == c.ID && r.First.Name == c.Name;
+                result.TotalRaces = resultsWithCar.length;
+                result.FirstPlaceFinishes = Enumerable.From(resultsWithCar).Count(function (r) {
+                    return r.Place == 1;
                 });
-                result.SecondPlaceFinishes = Enumerable.From(racesWithCar).Count(function (r) {
-                    return r.Second != null && r.Second.ID == c.ID && r.Second.Name == c.Name;
+                result.SecondPlaceFinishes = Enumerable.From(resultsWithCar).Count(function (r) {
+                    return r.Place == 2;
                 });
-                result.ThirdPlaceFinishes = Enumerable.From(racesWithCar).Count(function (r) {
-                    return r.Third != null && r.Third.ID == c.ID && r.Third.Name == c.Name;
+                result.ThirdPlaceFinishes = Enumerable.From(resultsWithCar).Count(function (r) {
+                    return r.Place == 3;
                 });
-                result.FourthPlaceFinishes = Enumerable.From(racesWithCar).Count(function (r) {
-                    return r.Fourth != null && r.Fourth.ID == c.ID && r.Fourth.Name == c.Name;
+                result.FourthPlaceFinishes = Enumerable.From(resultsWithCar).Count(function (r) {
+                    return r.Place == 4;
                 });
                 result.RacesRemaining = result.TotalRaces - result.FirstPlaceFinishes - result.SecondPlaceFinishes - result.ThirdPlaceFinishes - result.FourthPlaceFinishes;
                 result.Points = 4 * result.FirstPlaceFinishes + 3 * result.SecondPlaceFinishes + 2 * result.ThirdPlaceFinishes + 1 * result.FourthPlaceFinishes;
@@ -226,7 +240,6 @@ define(["require", "exports"], function(require, exports) {
             lane3.Lane = "Lane 3";
             var lane4 = new LaneStatsRow();
             lane4.Lane = "Lane 4";
-            console.log(lane1);
             var races = Enumerable.From(this.Tournament().Races).Where(function (x) {
                 return _this.IsRaceCompleted(x);
             }).ToArray();
@@ -242,61 +255,88 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ViewModel.prototype.AddLaneResult = function (laneCar, race, laneStats) {
-            if (race.First.ID == laneCar.ID) {
+            if (laneCar.Place == 1) {
                 laneStats.Points += 4;
                 laneStats.FirstPlaceFinishes++;
             }
-            if (race.Second.ID == laneCar.ID) {
+            if (laneCar.Place == 2) {
                 laneStats.Points += 3;
                 laneStats.SecondPlaceFinishes++;
             }
-            if (race.Third.ID == laneCar.ID) {
+            if (laneCar.Place == 3) {
                 laneStats.Points += 2;
                 laneStats.ThirdPlaceFinishes++;
             }
-            if (race.Fourth.ID == laneCar.ID) {
+            if (laneCar.Place == 4) {
                 laneStats.Points += 1;
                 laneStats.FourthPlaceFinishes++;
             }
         };
 
         ViewModel.prototype.ContainsCar = function (race, car) {
-            return race.Car1.ID == car.ID || race.Car2.ID == car.ID || race.Car3.ID == car.ID || race.Car4.ID == car.ID;
+            return race.Car1.Car.ID == car.ID || race.Car2.Car.ID == car.ID || race.Car3.Car.ID == car.ID || race.Car4.Car.ID == car.ID;
         };
 
-        ViewModel.prototype.CurrentRace_CarClick = function (car) {
-            if (this.First() == car || this.Second() == car || this.Third() == car || this.Fourth() == car) {
+        ViewModel.prototype.CurrentRace_CarClick = function (result) {
+            var lanePlace = this.LanePlace(result);
+
+            if (lanePlace != null) {
+                this.SelectedLane = lanePlace;
+            }
+
+            if (this.SelectedLane() > 0) {
                 return;
             }
 
-            if (this.First() == null) {
-                this.First(car);
-            } else if (this.Second() == null) {
-                this.Second(car);
-            } else if (this.Third() == null) {
-                this.Third(car);
-            } else if (this.Fourth() == null) {
-                this.Fourth(car);
+            var lastPlaceAssigned = Enumerable.From(this.LanePlaces()).Count(function (lp) {
+                return lp > 0;
+            });
+            var nextPlace = lastPlaceAssigned + 1;
+            this.SelectedLane(nextPlace);
+            console.log(this.LanePlaces());
+        };
+
+        ViewModel.prototype.LanePlace = function (raceResult) {
+            if (this.CurrentRace().Car1.Car.ID == raceResult.Car.ID) {
+                return this.Lane1Place;
             }
+            if (this.CurrentRace().Car2.Car.ID == raceResult.Car.ID) {
+                return this.Lane2Place;
+            }
+            if (this.CurrentRace().Car3.Car.ID == raceResult.Car.ID) {
+                return this.Lane3Place;
+            }
+            if (this.CurrentRace().Car4.Car.ID == raceResult.Car.ID) {
+                return this.Lane4Place;
+            }
+            return null;
         };
 
         ViewModel.prototype.CurrentRace_AllPlacesSelected = function () {
-            return (this.First() != null && this.First().Name != null) && (this.Second() != null && this.Second().Name != null) && (this.Third() != null && this.Third().Name != null) && (this.Fourth() != null && this.Fourth().Name != null);
+            return this.Lane1Place() > 0 && this.Lane2Place() > 0 && this.Lane3Place() > 0 && this.Lane4Place() > 0;
+        };
+
+        ViewModel.prototype.LanePlaces = function () {
+            return [this.Lane1Place(), this.Lane2Place(), this.Lane3Place(), this.Lane4Place()];
+        };
+
+        ViewModel.prototype.RaceResults = function (race) {
+            return [race.Car1, race.Car2, race.Car3, race.Car4];
         };
 
         ViewModel.prototype.CurrentRace_ClearPlaces = function () {
-            this.First(null);
-            this.Second(null);
-            this.Third(null);
-            this.Fourth(null);
+            this.Lane1Place(0);
+            this.Lane2Place(0);
+            this.Lane3Place(0);
+            this.Lane4Place(0);
         };
 
         ViewModel.prototype.CurrentRace_Save = function () {
             var _this = this;
-            this.CurrentRace().First = this.First();
-            this.CurrentRace().Second = this.Second();
-            this.CurrentRace().Third = this.Third();
-            this.CurrentRace().Fourth = this.Fourth();
+            this.CurrentRace().Car1.Place = this.Lane1Place();
+            this.CurrentRace().Car2.Place = this.Lane2Place();
+            this.CurrentRace().Car3.Place = this.Lane3Place();
+            this.CurrentRace().Car4.Place = this.Lane4Place();
 
             $('#current-race-container').css({ opacity: 0.5 });
 
@@ -323,26 +363,10 @@ define(["require", "exports"], function(require, exports) {
             if (race == null) {
                 return;
             }
-            if (race.First != null && race.First.Name != null) {
-                this.First(race.First);
-            } else {
-                this.First(null);
-            }
-            if (race.Second != null && race.Second.Name != null) {
-                this.Second(race.Second);
-            } else {
-                this.Second(null);
-            }
-            if (race.Third != null && race.Third.Name != null) {
-                this.Third(race.Third);
-            } else {
-                this.Third(null);
-            }
-            if (race.Fourth != null && race.Fourth.Name != null) {
-                this.Fourth(race.Fourth);
-            } else {
-                this.Fourth(null);
-            }
+            this.Lane1Place(race.Car1.Place);
+            this.Lane2Place(race.Car2.Place);
+            this.Lane3Place(race.Car3.Place);
+            this.Lane4Place(race.Car4.Place);
             this.CurrentRace(race);
         };
 
@@ -371,7 +395,7 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ViewModel.prototype.IsRaceCompleted = function (race) {
-            return race.First != null && race.First.Name != null && race.Second != null && race.Second.Name != null && race.Third != null && race.Third.Name != null && race.Fourth != null && race.Fourth.Name != null;
+            return race.Car1.Place > 0 && race.Car2.Place > 0 && race.Car3.Place > 0 && race.Car4.Place > 0;
         };
 
         ViewModel.prototype.createDummyRace = function () {

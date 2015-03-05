@@ -17,6 +17,18 @@ export class ViewModel {
             this.baseUrl = baseUrl;
             this.LoadTournament('Pack 125 - 2015');
         });
+        $(document).keypress((event) => {
+            var place = event.charCode - 48;
+            if (place < 1 || place > 4) {
+                return;
+            }
+
+            if (this.SelectedLane != null) {
+                console.log(this.SelectedLane());
+                this.SelectedLane(place);
+                console.log(this.SelectedLane());
+            }
+        });
         setInterval(() => { this.SetNextResult(); }, 5000);
         setInterval(() => { this.SetNextStandingsPage(false); }, 15000);
         this.LoadAvailableTournaments();
@@ -145,14 +157,15 @@ export class ViewModel {
         var results = [];
         var races = this.Tournament().Races;
         group.Cars.forEach((c: pinewoodderby.Car) => {
-            var racesWithCar = Enumerable.From(races).Where((r) => this.ContainsCar(r, c)).ToArray();
+            var raceResults = Enumerable.From(races).SelectMany((r: pinewoodderby.Race) => [r.Car1, r.Car2, r.Car3, r.Car4]).ToArray();
+            var resultsWithCar = Enumerable.From(raceResults).Where((rr: pinewoodderby.RaceResult) => rr.Car.ID == c.ID).ToArray();
             var result = new GroupStandingsRow();
             result.Car = c;
-            result.TotalRaces = racesWithCar.length;
-            result.FirstPlaceFinishes = Enumerable.From(racesWithCar).Count((r: pinewoodderby.Race) => r.First != null && r.First.ID == c.ID && r.First.Name == c.Name);
-            result.SecondPlaceFinishes = Enumerable.From(racesWithCar).Count((r: pinewoodderby.Race) => r.Second != null && r.Second.ID == c.ID && r.Second.Name == c.Name);
-            result.ThirdPlaceFinishes = Enumerable.From(racesWithCar).Count((r: pinewoodderby.Race) => r.Third != null && r.Third.ID == c.ID && r.Third.Name == c.Name);
-            result.FourthPlaceFinishes = Enumerable.From(racesWithCar).Count((r: pinewoodderby.Race) => r.Fourth != null && r.Fourth.ID == c.ID && r.Fourth.Name == c.Name);
+            result.TotalRaces = resultsWithCar.length;
+            result.FirstPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 1);
+            result.SecondPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 2);
+            result.ThirdPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 3);
+            result.FourthPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 4);
             result.RacesRemaining = result.TotalRaces - result.FirstPlaceFinishes - result.SecondPlaceFinishes - result.ThirdPlaceFinishes - result.FourthPlaceFinishes;
             result.Points = 4 * result.FirstPlaceFinishes + 3 * result.SecondPlaceFinishes + 2 * result.ThirdPlaceFinishes + 1 * result.FourthPlaceFinishes;
             results.push(result);
@@ -195,7 +208,6 @@ export class ViewModel {
         lane3.Lane = "Lane 3";
         var lane4 = new LaneStatsRow();
         lane4.Lane = "Lane 4";
-        console.log(lane1);
         var races = Enumerable.From(this.Tournament().Races)
             .Where((x: pinewoodderby.Race) => this.IsRaceCompleted(x))
             .ToArray();
@@ -210,30 +222,30 @@ export class ViewModel {
             .ToArray();
     }
 
-    private AddLaneResult(laneCar: pinewoodderby.Car, race: pinewoodderby.Race, laneStats: LaneStatsRow) {
-        if (race.First.ID == laneCar.ID) {
+    private AddLaneResult(laneCar: pinewoodderby.RaceResult, race: pinewoodderby.Race, laneStats: LaneStatsRow) {
+        if (laneCar.Place == 1) {
             laneStats.Points += 4;
             laneStats.FirstPlaceFinishes++;
         }
-        if (race.Second.ID == laneCar.ID) {
+        if (laneCar.Place == 2) {
             laneStats.Points += 3;
             laneStats.SecondPlaceFinishes++;
         }
-        if (race.Third.ID == laneCar.ID) {
+        if (laneCar.Place == 3) {
             laneStats.Points += 2;
             laneStats.ThirdPlaceFinishes++;
         }
-        if (race.Fourth.ID == laneCar.ID) {
+        if (laneCar.Place == 4) {
             laneStats.Points += 1;
             laneStats.FourthPlaceFinishes++;
         }   
     }
 
     private ContainsCar(race: pinewoodderby.Race, car: pinewoodderby.Car) {
-        return race.Car1.ID == car.ID ||
-            race.Car2.ID == car.ID ||
-            race.Car3.ID == car.ID ||
-            race.Car4.ID == car.ID;
+        return race.Car1.Car.ID == car.ID ||
+            race.Car2.Car.ID == car.ID ||
+            race.Car3.Car.ID == car.ID ||
+            race.Car4.Car.ID == car.ID;
     }
 
     private Tournament = ko.observable<pinewoodderby.Tournament>();
@@ -247,53 +259,76 @@ export class ViewModel {
     private CurrentStandingsPageInfo = ko.observable<StandingsPage>(null);
     private StandingsPaused = ko.observable(false);
 
-    private First = ko.observable<pinewoodderby.Car>();
-    private Second = ko.observable<pinewoodderby.Car>();
-    private Third = ko.observable<pinewoodderby.Car>();
-    private Fourth = ko.observable<pinewoodderby.Car>();
+    private Lane1Place = ko.observable(0);
+    private Lane2Place = ko.observable(0);
+    private Lane3Place = ko.observable(0);
+    private Lane4Place = ko.observable(0);
+    private SelectedLane: KnockoutObservable<number>;
 
     private CurrentStandingsPage = 0;
     private StandingsPageSize = 10;
     private StandingsPages: StandingsPage[];
 
-    private CurrentRace_CarClick(car: pinewoodderby.Car) {
-        if (this.First() == car ||
-            this.Second() == car ||
-            this.Third() == car ||
-            this.Fourth() == car) {
+    private CurrentRace_CarClick(result: pinewoodderby.RaceResult) {
+        var lanePlace = this.LanePlace(result);
+
+        if (lanePlace != null) {
+            this.SelectedLane = lanePlace;
+        }
+
+        if (this.SelectedLane() > 0) {
             return;
         }
 
-        if (this.First() == null) {
-            this.First(car);
-        } else if (this.Second() == null) {
-            this.Second(car);
-        } else if (this.Third() == null) {
-            this.Third(car);
-        } else if (this.Fourth() == null) {
-            this.Fourth(car);
+        var lastPlaceAssigned = Enumerable.From(this.LanePlaces()).Count((lp: number) => lp > 0);
+        var nextPlace = lastPlaceAssigned + 1;
+        this.SelectedLane(nextPlace);
+        console.log(this.LanePlaces());
+    }
+
+    private LanePlace(raceResult: pinewoodderby.RaceResult) {
+        if (this.CurrentRace().Car1.Car.ID == raceResult.Car.ID) {
+            return this.Lane1Place;
         }
+        if (this.CurrentRace().Car2.Car.ID == raceResult.Car.ID) {
+            return this.Lane2Place;
+        }
+        if (this.CurrentRace().Car3.Car.ID == raceResult.Car.ID) {
+            return this.Lane3Place;
+        }
+        if (this.CurrentRace().Car4.Car.ID == raceResult.Car.ID) {
+            return this.Lane4Place;
+        }
+        return null;
     }
 
     private CurrentRace_AllPlacesSelected() {
-        return (this.First() != null && this.First().Name != null) &&
-            (this.Second() != null && this.Second().Name != null) &&
-            (this.Third() != null && this.Third().Name != null) &&
-            (this.Fourth() != null && this.Fourth().Name != null);
+        return this.Lane1Place() > 0 &&
+            this.Lane2Place() > 0 &&
+            this.Lane3Place() > 0 &&
+            this.Lane4Place() > 0;
+    }
+
+    private LanePlaces() {
+        return [this.Lane1Place(), this.Lane2Place(), this.Lane3Place(), this.Lane4Place()];
+    }
+
+    private RaceResults(race: pinewoodderby.Race) {
+        return [race.Car1, race.Car2, race.Car3, race.Car4];
     }
 
     private CurrentRace_ClearPlaces() {
-        this.First(null);
-        this.Second(null);
-        this.Third(null);
-        this.Fourth(null);
+        this.Lane1Place(0);
+        this.Lane2Place(0);
+        this.Lane3Place(0);
+        this.Lane4Place(0);
     }
 
     private CurrentRace_Save() {
-        this.CurrentRace().First = this.First();
-        this.CurrentRace().Second = this.Second();
-        this.CurrentRace().Third = this.Third();
-        this.CurrentRace().Fourth = this.Fourth();
+        this.CurrentRace().Car1.Place = this.Lane1Place();
+        this.CurrentRace().Car2.Place = this.Lane2Place();
+        this.CurrentRace().Car3.Place = this.Lane3Place();
+        this.CurrentRace().Car4.Place = this.Lane4Place();
 
         $('#current-race-container').css({ opacity: 0.5 });
 
@@ -320,26 +355,10 @@ export class ViewModel {
         if (race == null) {
             return;
         }
-        if (race.First != null && race.First.Name != null) {
-            this.First(race.First);
-        } else {
-            this.First(null);
-        }
-        if (race.Second != null && race.Second.Name != null) {
-            this.Second(race.Second);
-        } else {
-            this.Second(null);
-        }
-        if (race.Third != null && race.Third.Name != null) {
-            this.Third(race.Third);
-        } else {
-            this.Third(null);
-        }
-        if (race.Fourth != null && race.Fourth.Name != null) {
-            this.Fourth(race.Fourth);
-        } else {
-            this.Fourth(null);
-        }
+        this.Lane1Place(race.Car1.Place);
+        this.Lane2Place(race.Car2.Place);
+        this.Lane3Place(race.Car3.Place);
+        this.Lane4Place(race.Car4.Place);
         this.CurrentRace(race);
     }
 
@@ -366,10 +385,10 @@ export class ViewModel {
     }
 
     private IsRaceCompleted(race: pinewoodderby.Race) {
-        return race.First != null && race.First.Name != null &&
-            race.Second != null && race.Second.Name != null &&
-            race.Third != null && race.Third.Name != null &&
-            race.Fourth != null && race.Fourth.Name != null;
+        return race.Car1.Place > 0 &&
+            race.Car2.Place > 0 &&
+            race.Car3.Place > 0 &&
+            race.Car4.Place > 0;
     }
 
     private createDummyRace() {
