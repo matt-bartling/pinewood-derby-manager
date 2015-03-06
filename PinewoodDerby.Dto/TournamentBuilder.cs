@@ -25,7 +25,7 @@ namespace PinewoodDerby.Dto
 
         public void AddGroup(string folder, bool showClassStandings = false)
         {
-            _AddGroup(folder, folder, false);
+            _AddGroup(folder, folder, showClassStandings);
         }
 
         public void AddGroup(string folder, string groupName, bool showClassStandings = false)

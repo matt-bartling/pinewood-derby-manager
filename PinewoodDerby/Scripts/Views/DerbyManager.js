@@ -24,6 +24,7 @@ define(["require", "exports"], function(require, exports) {
             this.Lane4Place = ko.observable(0);
             this.CurrentStandingsPage = 0;
             this.StandingsPageSize = 10;
+            this.LaneStats = ko.observableArray([]);
             this.baseUrl = baseUrl;
             this.Tournament(this.createDummyRace());
             $(document).ready(function () {
@@ -38,9 +39,7 @@ define(["require", "exports"], function(require, exports) {
                 }
 
                 if (_this.SelectedLane != null) {
-                    console.log(_this.SelectedLane());
                     _this.SelectedLane(place);
-                    console.log(_this.SelectedLane());
                 }
             });
             setInterval(function () {
@@ -169,6 +168,7 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ViewModel.prototype.UpdateGroupStandings = function () {
+            this.LaneStats(this.BuildLaneStats());
             var pageInfo = this.StandingsPages[this.CurrentStandingsPage];
             var group = this.Tournament().Groups[pageInfo.GroupNumber];
             if (group == null || group.Cars == null) {
@@ -230,7 +230,7 @@ define(["require", "exports"], function(require, exports) {
             this.DisplayedGroup(group);
         };
 
-        ViewModel.prototype.LaneStats = function () {
+        ViewModel.prototype.BuildLaneStats = function () {
             var _this = this;
             var lane1 = new LaneStatsRow();
             lane1.Lane = "Lane 1";

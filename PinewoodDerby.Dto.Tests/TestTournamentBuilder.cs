@@ -15,7 +15,7 @@ namespace PinewoodDerby.Dto.Tests
             var builder = new TournamentBuilder(tournamentName, @".\Races");
             builder.AddGroup("Scouts", true);
             builder.AddGroup("Siblings");
-            builder.AddGroup("Heavyweight");
+            builder.AddGroup("Heavyweight", "Adults");
             var tournament = builder.Build();
             Directory.CreateDirectory(Path.Combine(@"C:/Tournaments", tournamentName));
             File.WriteAllText(Path.Combine(@"C:/Tournaments", tournamentName, "tournament.json"),

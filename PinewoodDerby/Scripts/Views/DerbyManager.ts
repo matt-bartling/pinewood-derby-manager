@@ -24,9 +24,7 @@ export class ViewModel {
             }
 
             if (this.SelectedLane != null) {
-                console.log(this.SelectedLane());
                 this.SelectedLane(place);
-                console.log(this.SelectedLane());
             }
         });
         setInterval(() => { this.SetNextResult(); }, 5000);
@@ -149,6 +147,7 @@ export class ViewModel {
     }
 
     private UpdateGroupStandings() {
+        this.LaneStats(this.BuildLaneStats());
         var pageInfo = this.StandingsPages[this.CurrentStandingsPage];
         var group = this.Tournament().Groups[pageInfo.GroupNumber];
         if (group == null || group.Cars == null) {
@@ -199,7 +198,7 @@ export class ViewModel {
         this.DisplayedGroup(group);
     }
 
-    private LaneStats() {
+    private BuildLaneStats() {
         var lane1 = new LaneStatsRow();
         lane1.Lane = "Lane 1";
         var lane2 = new LaneStatsRow();
@@ -268,6 +267,7 @@ export class ViewModel {
     private CurrentStandingsPage = 0;
     private StandingsPageSize = 10;
     private StandingsPages: StandingsPage[];
+    private LaneStats = ko.observableArray<LaneStatsRow>([]);
 
     private CurrentRace_CarClick(result: pinewoodderby.RaceResult) {
         var lanePlace = this.LanePlace(result);
