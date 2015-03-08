@@ -190,7 +190,11 @@ export class ViewModel {
 
         var standings = Enumerable.From(standings)
             .OrderByDescending((r: GroupStandingsRow) => r.Points)
-            .ThenByDescending((r) => r.RacesRemaining)
+            .ThenByDescending((r: GroupStandingsRow) => r.RacesRemaining)
+            .ThenByDescending((r: GroupStandingsRow) => r.FirstPlaceFinishes)
+            .ThenByDescending((r: GroupStandingsRow) => r.SecondPlaceFinishes)
+            .ThenByDescending((r: GroupStandingsRow) => r.ThirdPlaceFinishes)
+            .ThenByDescending((r: GroupStandingsRow) => r.FourthPlaceFinishes)
             .Skip(pageInfo.PlaceIndex)
             .Take(this.StandingsPageSize)
             .ToArray();
@@ -283,7 +287,6 @@ export class ViewModel {
         var lastPlaceAssigned = Enumerable.From(this.LanePlaces()).Count((lp: number) => lp > 0);
         var nextPlace = lastPlaceAssigned + 1;
         this.SelectedLane(nextPlace);
-        console.log(this.LanePlaces());
     }
 
     private LanePlace(raceResult: pinewoodderby.RaceResult) {

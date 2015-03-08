@@ -225,6 +225,14 @@ define(["require", "exports"], function(require, exports) {
                 return r.Points;
             }).ThenByDescending(function (r) {
                 return r.RacesRemaining;
+            }).ThenByDescending(function (r) {
+                return r.FirstPlaceFinishes;
+            }).ThenByDescending(function (r) {
+                return r.SecondPlaceFinishes;
+            }).ThenByDescending(function (r) {
+                return r.ThirdPlaceFinishes;
+            }).ThenByDescending(function (r) {
+                return r.FourthPlaceFinishes;
             }).Skip(pageInfo.PlaceIndex).Take(this.StandingsPageSize).ToArray();
             this.GroupStandings(standings);
             this.DisplayedGroup(group);
@@ -293,7 +301,6 @@ define(["require", "exports"], function(require, exports) {
             });
             var nextPlace = lastPlaceAssigned + 1;
             this.SelectedLane(nextPlace);
-            console.log(this.LanePlaces());
         };
 
         ViewModel.prototype.LanePlace = function (raceResult) {

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -26,6 +27,7 @@ namespace PinewoodDerby.Controllers.API
         [POST("savetournament")]
         public HttpResponseMessage SaveTournament(Tournament tournament)
         {
+            File.WriteAllText(@"C:\Tournaments\{0}\tournament.{1}.json".FormatWith(tournament.Name, DateTime.Now.ToString("yyyyMMdd-hhmmss")), JsonConvert.SerializeObject(tournament, Formatting.Indented));
             File.WriteAllText(@"C:\Tournaments\{0}\tournament.json".FormatWith(tournament.Name), JsonConvert.SerializeObject(tournament, Formatting.Indented));
             return ApiResponse.SuccessResponse(Request);
         }
