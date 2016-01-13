@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -75,5 +76,18 @@ namespace PinewoodDerby.Dto.Tests
                 JsonConvert.SerializeObject(tournament, Formatting.Indented));
             Console.WriteLine(JsonConvert.SerializeObject(tournament, Formatting.Indented));
         }
+
+        public event Action events = () => { };
+        [Test]
+        public void TestIter()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                events += () => Console.WriteLine((++i).ToString());
+            }
+
+            events();
+        }
     }
+
 }

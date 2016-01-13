@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoubleEliminationDtos.cs" />
+    <Compile Include="DoubleEliminationTournamentBuilder.cs" />
     <Compile Include="PinewoodDerby.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TournamentBuilder.cs" />
@@ -50,6 +52,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="DoubleEliminationDtos.cs.d.ts">
+      <DependentUpon>DoubleEliminationDtos.cs</DependentUpon>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="PinewoodDerby.cs.d.ts">
       <DependentUpon>PinewoodDerby.cs</DependentUpon>
     </TypeScriptCompile>

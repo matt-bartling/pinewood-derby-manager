@@ -1,0 +1,63 @@
+﻿<div id="standings">
+    <div id="standings-container" data-bind="with: CurrentStandingsPageInfo()">
+        <div data-bind="if: !$data.ShowLaneStats">
+            <div class="group-title" data-bind="text: Title()"></div>
+            <table class="table table-condensed">
+                <thead>
+                <th style="width: 50px;">Place</th>
+                <th style="width: 200px;">Car</th>
+                <th style="width: 50px;">Total</th>
+                <th style="width: 50px;">1st</th>
+                <th style="width: 50px;">2nd</th>
+                <th style="width: 50px;">3rd</th>
+                <th style="width: 50px;">4th</th>
+                <th style="width: 50px;">Remaining</th>
+                <th style="width: 50px;">Points</th>
+                </thead>
+                <tbody data-bind="foreach: $root.GroupStandings()">
+                    <tr class="standings-row">
+                        <td data-bind="text: Place"></td>
+                        <td data-bind="text: Car.ID + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
+                        <td data-bind="text: TotalRaces"></td>
+                        <td data-bind="text: FirstPlaceFinishes"></td>
+                        <td data-bind="text: SecondPlaceFinishes"></td>
+                        <td data-bind="text: ThirdPlaceFinishes"></td>
+                        <td data-bind="text: FourthPlaceFinishes"></td>
+                        <td data-bind="text: RacesRemaining"></td>
+                        <td data-bind="text: Points"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: $data.ShowLaneStats">
+            <div class="group-title">Lane Stats</div>
+            <table class="table table-condensed">
+                <thead>
+                <th style="width: 200px;">Car</th>
+                <th style="width: 50px;">1st</th>
+                <th style="width: 50px;">2nd</th>
+                <th style="width: 50px;">3rd</th>
+                <th style="width: 50px;">4th</th>
+                <th style="width: 50px;">Points</th>
+                </thead>
+                <tbody data-bind="foreach: $root.LaneStats()">
+                    <tr class="standings-row">
+                        <td data-bind="text: Lane"></td>
+                        <td data-bind="text: FirstPlaceFinishes"></td>
+                        <td data-bind="text: SecondPlaceFinishes"></td>
+                        <td data-bind="text: ThirdPlaceFinishes"></td>
+                        <td data-bind="text: FourthPlaceFinishes"></td>
+                        <td data-bind="text: Points"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="control">
+        <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.Standings_PrevPage(); }"></div>
+        <div class="btn-lg btn glyphicon glyphicon-pause" data-bind="click: function() { $root.Standings_Pause(); }, visible: !$root.StandingsPaused()"></div>
+        <div class="btn-lg btn glyphicon glyphicon-play" data-bind="click: function() { $root.Standings_Play(); }, visible: $root.StandingsPaused()"></div>
+        <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.Standings_NextPage(); }"></div>
+    </div>
+</div>
+

@@ -195,6 +195,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\API\DerbyManagerController.cs" />
+    <Compile Include="Controllers\API\TournamentManagerController.cs" />
+    <Compile Include="Controllers\MVC\TournamentManagerController.cs" />
     <Compile Include="Controllers\MVC\DerbyManagerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -212,6 +214,12 @@
     </Content>
     <Content Include="Content\colors.min.css">
       <DependentUpon>colors.css</DependentUpon>
+    </Content>
+    <Content Include="Content\double-elimination-tournament.css">
+      <DependentUpon>double-elimination-tournament.less</DependentUpon>
+    </Content>
+    <Content Include="Content\double-elimination-tournament.min.css">
+      <DependentUpon>double-elimination-tournament.css</DependentUpon>
     </Content>
     <Content Include="Content\images\left-arrow.ico" />
     <Content Include="Content\images\Next.jpeg" />
@@ -297,6 +305,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\double-elimination-tournament.less" />
+    <Content Include="Content\double-elimination-tournament.css.map">
+      <DependentUpon>double-elimination-tournament.css</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\jqplot\changes.txt" />
     <Content Include="Scripts\jqplot\copyright.txt" />
@@ -430,6 +442,13 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\DerbyManager\Index.cshtml" />
+    <Content Include="Views\TournamentManager\TournamentView.cshtml" />
+    <Content Include="Views\DerbyManager\StandingsView.cshtml" />
+    <Content Include="Views\DerbyManager\RaceResultView.cshtml" />
+    <Content Include="Views\DerbyManager\CurrentRaceView.cshtml" />
+    <Content Include="Views\DerbyManager\UpcomingRacesView.cshtml" />
+    <Content Include="Views\DerbyManager\TournamentPickerView.cshtml" />
+    <Content Include="Views\DerbyManager\NavBarView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -463,6 +482,7 @@
     <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="Scripts\Views\Common.ts" />
     <TypeScriptCompile Include="Scripts\Views\DerbyManager.ts" />
+    <TypeScriptCompile Include="Scripts\Views\TournamentManager.ts" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PinewoodDerby.Dto\PinewoodDerby.Dto.csproj">

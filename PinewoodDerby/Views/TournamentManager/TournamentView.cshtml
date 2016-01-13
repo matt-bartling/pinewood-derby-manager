@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Derby Manager";
+}
+
+<div id="mainContent">
+    <div id="body-content" class="body-content col" data-bind="if: Tournament() != null">
+        <!-- ko foreach: Rounds() -->
+        <div class="col-lg-1" style="border: 1px solid yellow; height: 100%; back-color: blue;" data-bind="foreach: $root.GamesForRound($data)">
+            <div class="bracket"">
+                <div class="top-half" data-bind="style: { height: $root.Height($data)+'px', top: $root.Top($data, 1)+'px' }">
+                    <span data-bind="text: P1Source == null ? P1.Seed : (P1Source.WinnerOrLoser == 0 ? 'L' : 'W')+P1Source.GameNumber"></span>
+                </div>
+            <div class="bottom-half" data-bind="style: { height: $root.Height($data)+'px' , top: $root.Top($data, 2)+'px' }, text: P2Source == null ? P2.Seed : (P2Source.WinnerOrLoser == 0 ? 'L' : 'W')+P2Source.GameNumber"></div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+
+@section scripts
+{
+    <link rel="stylesheet" href="~/Content/double-elimination-tournament.css" type="text/css"/>
+    <script src="~/Scripts/Common/customBindings.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script type="text/javascript">
+        require(["Scripts/views/tournamentmanager"], function (module) {
+            var viewModel = new module.ViewModel('@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")');
+        });
+    </script>
+}

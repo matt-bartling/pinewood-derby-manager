@@ -1,0 +1,19 @@
+﻿<div id="upcoming-races-pane">
+    <div id="upcoming-races-container">
+        <span class="title panel-title">Upcoming Races</span>
+        <!-- ko foreach: NextFourRaces() -->
+        <div class="race">
+            <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
+            <div class="lane-1" data-bind="with: Car1">Lane 1: @Result_Car()</div>
+            <div class="lane-2" data-bind="with: Car2">Lane 2: @Result_Car()</div>
+            <div class="lane-3" data-bind="with: Car3">Lane 3: @Result_Car()</div>
+            <div class="lane-4" data-bind="with: Car4">Lane 4: @Result_Car()</div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+@helper Result_Car()
+{
+    @:<span data-bind="text: Car.ID + ' - ' + Car.Builder + ' - ' + Car.Name">
+}

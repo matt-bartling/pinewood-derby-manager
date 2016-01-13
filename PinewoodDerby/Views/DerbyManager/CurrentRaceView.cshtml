@@ -1,0 +1,38 @@
+﻿<div id="current-race">
+    <div id="current-race-container">
+        <!-- ko if: CurrentRace() != null-->
+        <div class="race" data-bind="with: CurrentRace()">
+            <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - Group: ' + Group"></div>
+            <div class="lane-1" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
+            <div class="lane-2" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
+            <div class="lane-3" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
+            <div class="lane-4" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
+        </div>
+        <div class="control">
+            <button class="clear-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_ClearPlaces(); }">Clear</button>
+            <button class="save-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_Save(); }, enable: $root.CurrentRace_AllPlacesSelected()">Save</button>
+            <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.CurrentRace_PrevRace(); }"><i class="icon-prev"></i></div>
+            <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.CurrentRace_NextRace(); }"></div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: CurrentRace() == null -->
+        <div class="race">
+            <div class="race-title">All Races Completed</div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+@helper CurrentRaceCar()
+{
+    <div data-bind="text: Car.ID + ' - ' + Car.Builder"></div>
+    <div data-bind="text: Car.Name"></div>
+    <!-- ko with: $root.LanePlace($data) -->
+    <div class="race-place-first" data-bind="visible: $data == 1"><span>1st</span></div>
+    <div class="race-place-second" data-bind="visible: $data == 2"><span>2nd</span></div>
+    <div class="race-place-third" data-bind="visible: $data == 3"><span>3rd</span></div>
+    <div class="race-place-fourth" data-bind="visible: $data == 4"><span>4th</span></div>
+    <!-- /ko -->
+}
+
+
