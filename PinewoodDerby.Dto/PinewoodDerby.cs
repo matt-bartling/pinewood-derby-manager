@@ -1,4 +1,6 @@
-﻿using Utils.Csv;
+﻿using System;
+using System.Linq;
+using Utils.Csv;
 using Utils.TypeScript;
 
 namespace PinewoodDerby.Dto
@@ -9,6 +11,36 @@ namespace PinewoodDerby.Dto
         public string Name { get; set; }
         public Group[] Groups { get; set; }
         public Race[] Races { get; set; }
+        public Group[] TiebreakerGroups { get; set; }
+        public Race[] TiebreakerRaces { get; set; }
+        public Group[] FinalsGroups { get; set; }
+        public Race[] FinalsRaces { get; set; }
+        public FinalStandingsGroup[] FinalStandings { get; set; }
+
+        public LaneStat[] LaneStats()
+        {
+            return new[]
+            {
+                BuildLaneStat(r => r.Car1, 1),
+                BuildLaneStat(r => r.Car2, 2),
+                BuildLaneStat(r => r.Car3, 3),
+                BuildLaneStat(r => r.Car4, 4),
+            };
+        }
+
+        private LaneStat BuildLaneStat(Func<Race, RaceResult> whichCar, int laneNumber)
+        {
+            var laneResults = Races.Select(whichCar).ToArray();
+            return new LaneStat
+            {
+                LaneNumber = laneNumber,
+                FirstPlaceFinishes = laneResults.Count(r => r.Place == 1),
+                SecondPlaceFinishes = laneResults.Count(r => r.Place == 2),
+                ThirdPlaceFinishes = laneResults.Count(r => r.Place == 3),
+                FourthPlaceFinishes = laneResults.Count(r => r.Place == 4),
+                Points = laneResults.Sum(r => r.Points),
+            };
+        }
     }
 
     [TypeScriptModule("pinewoodderby")]
@@ -39,6 +71,21 @@ namespace PinewoodDerby.Dto
     }
 
     [TypeScriptModule("pinewoodderby")]
+    public class FinalStandingsGroup
+    {
+        public string Group { get; set; }
+        public FinalStandingRow[] Rows { get; set; }
+    }
+
+    [TypeScriptModule("pinewoodderby")]
+    public class FinalStandingRow
+    {
+        public Car Car { get; set; }
+        public int Place { get; set; }
+        public int Points { get; set; }
+    }
+
+    [TypeScriptModule("pinewoodderby")]
     public class Car : IFromCsv
     {
         public int Number { get; set; }
@@ -55,6 +102,16 @@ namespace PinewoodDerby.Dto
             Name = strings[3];
             Class = strings.Length > 4 ? strings[4] : "";
         }
+    }
+
+    public class LaneStat
+    {
+        public int LaneNumber { get; set; }
+        public int FirstPlaceFinishes { get; set; }
+        public int SecondPlaceFinishes { get; set; }
+        public int ThirdPlaceFinishes { get; set; }
+        public int FourthPlaceFinishes { get; set; }
+        public int Points { get; set; }
     }
 
     [TypeScriptModule("pinewoodderby")]

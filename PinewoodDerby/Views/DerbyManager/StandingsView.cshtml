@@ -1,4 +1,5 @@
 ﻿<div id="standings">
+    <!-- ko if: CurrentRace() != null || $root.Tournament().FinalsRaces == null || $root.Tournament().FinalsRaces.length == 0 -->
     <div id="standings-container" data-bind="with: CurrentStandingsPageInfo()">
         <div data-bind="if: !$data.ShowLaneStats">
             <div class="group-title" data-bind="text: Title()"></div>
@@ -59,5 +60,29 @@
         <div class="btn-lg btn glyphicon glyphicon-play" data-bind="click: function() { $root.Standings_Play(); }, visible: $root.StandingsPaused()"></div>
         <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.Standings_NextPage(); }"></div>
     </div>
+    <!-- /ko -->
+    <!-- ko if: CurrentRace() == null && $root.Tournament().FinalsRaces != null && $root.Tournament().FinalsRaces.length > 0 && $root.Tournament().FinalStandings != null && $root.Tournament().FinalStandings.length > 0 && $root.CurrentFinalStandingsPageInfo() != null -->
+    <div id="final-standings-container" data-bind="with: $root.CurrentFinalStandingsPageInfo()">
+        <div class="group-title" data-bind="text: Group"></div>
+        <table class="table table-condensed">
+            <thead>
+                <th style="width: 50px;">Place</th>
+                <th style="width: 200px;">Car</th>
+                <th style="width: 50px;">Points</th>
+            </thead>
+            <tbody data-bind="foreach: Rows">
+                <tr class="standings-row">
+                    <td data-bind="text: Place"></td>
+                    <td data-bind="text: Car.ID + ' - ' + Car.Builder + ' - ' + Car.Name"></td>
+                    <td data-bind="text: Points"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="control">
+        <div class="btn-lg btn btn-left glyphicon glyphicon-chevron-left" data-bind="click: function() { $root.FinalStandings_PrevPage(); }"></div>
+        <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.FinalStandings_NextPage(); }"></div>
+    </div>
+    <!-- /ko -->
 </div>
 

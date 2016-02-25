@@ -195,6 +195,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\API\DerbyManagerController.cs" />
+    <Compile Include="Controllers\API\RaceDefinitionSource.cs" />
     <Compile Include="Controllers\API\TournamentManagerController.cs" />
     <Compile Include="Controllers\MVC\TournamentManagerController.cs" />
     <Compile Include="Controllers\MVC\DerbyManagerController.cs" />
