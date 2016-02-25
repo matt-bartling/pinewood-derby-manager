@@ -164,14 +164,14 @@ export class ViewModel {
         if (this.Tournament().FinalStandings != null && this.Tournament().FinalStandings.length > 0) {
             console.log(pageOffset);
             console.log($('#final-standings-container'));
-            $('#final-standings-container').fadeOut('fast', 'swing', () => {
+//            $('#final-standings-container').fadeOut('fast', 'swing', () => {
                 console.log('A');
                 this.CurrentFinalStandingsPage = (this.CurrentFinalStandingsPage + pageOffset) % this.Tournament().FinalStandings.length;
                 console.log(this.CurrentFinalStandingsPage);
                 this.CurrentFinalStandingsPageInfo(this.Tournament().FinalStandings[this.CurrentFinalStandingsPage]);
                 console.log(this.CurrentFinalStandingsPageInfo());
-                $('#standings-container').fadeIn('fast', 'swing');
-            });
+//                $('#standings-container').fadeIn('fast', 'swing');
+//            });
         }
     }
 
