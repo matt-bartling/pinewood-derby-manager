@@ -15,21 +15,19 @@
             <div class="btn-lg btn btn-right glyphicon glyphicon-chevron-right" data-bind="click: function() { $root.CurrentRace_NextRace(); }"></div>
         </div>
         <!-- /ko -->
-        <!-- ko if: CurrentRace() == null && $root.Ties().length > 0 && $root.Tournament().TiebreakerRaces.length == 0 -->
+        <!-- ko if: CurrentRace() == null -->
         <div class="race">
-            <!-- ko if: $root.Ties().length > 0 -->
-            <button class="btn-success btn-lg btn" data-bind="click: function() { $root.CreateTiebreakerRaces(); }">Create Tiebreakers</button>
-            <!-- /ko -->
+            All Races complete
         </div>
         <!-- /ko -->
-        <!-- ko if: CurrentRace() == null && (($root.Ties().length > 0 && $root.Tournament().TiebreakerRaces.length > 0) || $root.Ties().Length == 0) && $root.Tournament().FinalsRaces.length == 0  -->
-        <div class="race">
-            <button class="btn-success btn-lg btn" data-bind="click: function() { $root.CreateFinalsRaces(); }">Create Finals</button>
-        </div>
-        <!-- /ko -->
-        <!-- ko if: CurrentRace() == null && $root.Tournament().FinalsRaces != null && $root.Tournament().FinalsRaces.length > 0 -->
-        <div data-bind="text: 'All Races Complete'"></div>
-        <!-- /ko -->
+@*        <!-- ko if: CurrentRace() == null && (($root.Ties().length > 0 && $root.Tournament().TiebreakerRaces.length > 0) || $root.Ties().Length == 0) && $root.Tournament().FinalsRaces.length == 0  -->*@
+@*        <div class="race">*@
+@*            <button class="btn-success btn-lg btn" data-bind="click: function() { $root.CreateFinalsRaces(); }">Create Finals</button>*@
+@*        </div>*@
+@*        <!-- /ko -->*@
+@*        <!-- ko if: CurrentRace() == null && $root.Tournament().FinalsRaces != null && $root.Tournament().FinalsRaces.length > 0 -->*@
+@*        <div data-bind="text: 'All Races Complete'"></div>*@
+@*        <!-- /ko -->*@
     </div>
 </div>
 

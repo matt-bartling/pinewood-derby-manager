@@ -16,7 +16,7 @@ export class ViewModel {
         $(document).ready(() => {
             ko.applyBindings(this, document.getElementById('mainContent'));
             this.baseUrl = baseUrl;
-            this.LoadTournament('Pack 125 - 2015');
+            this.LoadTournament('test-2016');
         });
         $(document).keypress((event) => {
             var place = event.charCode - 48;
@@ -34,50 +34,15 @@ export class ViewModel {
         setInterval(() => this.LoadAvailableTournaments(), 5000);
     }
 
-    public Ties() {
-        var ties = [];
-        this.Tournament().Groups.forEach((group: pinewoodderby.Group) => {
-            var tiedCars = [];
-            var results = this.RaceResultsFor(group);
-            var ordered = Enumerable.From(results)
-                .OrderByDescending((result: pinewoodderby.RaceResult) => {
-                    return result.Points;
-                }).ToArray();
-            if (ordered[0].Points == ordered[1].Points) {
-                tiedCars.push(ordered[0]);
-            }
-            for (var i = 1; i < ordered.length; i++) {
-                if (ordered[i].Points == ordered[0].Points) {
-                    tiedCars.push(ordered[i]);
-                }    
-            }
-            if (tiedCars.length > 0) {
-                ties.push({ Group: group, TiedCars: tiedCars });
-            }
-        });
-        return ties;
-    }
-
-    public CreateTiebreakerRaces() {
-        $.getJSON(this.baseUrl + "api/derbymanager/create-tiebreakers?name=" + this.Tournament().Name, (response: Common.ApiResponse<pinewoodderby.Tournament>) => {
-            this.LoadReturnedTournament(response);
-        });
-    }
-
-    public CreateFinalsRaces() {
-        $.getJSON(this.baseUrl + "api/derbymanager/create-finals?name=" + this.Tournament().Name, (response: Common.ApiResponse<pinewoodderby.Tournament>) => {
-            this.LoadReturnedTournament(response);
-        });
-    }
-
     public LoadTournament(name: string) {
         $.getJSON(this.baseUrl + "api/derbymanager/gettournament?name=" + name, (response: Common.ApiResponse<pinewoodderby.Tournament>) => {
-            this.LoadReturnedTournament(response);
+            this.LoadReturnedTournament(response.Content);
+            this.SetPageNumber(0);
         });
     }
 
-    public LoadReturnedTournament(response: Common.ApiResponse<pinewoodderby.Tournament>) {
-        this.Tournament(response.Content);
+    public LoadReturnedTournament(tournament: pinewoodderby.Tournament) {
+        this.Tournament(tournament);
         var pageNumber = 0;
         this.StandingsPages = [];
         for (var n = 0; n < this.Tournament().Groups.length; n++) {
@@ -123,9 +88,9 @@ export class ViewModel {
         lanePage.ShowLaneStats = true;
         this.StandingsPages.push(lanePage);
         this.SetNextRace();
-        this.SetPageNumber(0);
         this.SetNextResult();
-        this.FinalStandings_SetPageNumber(0);
+        this.LaneStats(tournament.LaneStats);
+        this.UpdateGroupStandings();
     }
 
     public LoadAvailableTournaments() {
@@ -150,29 +115,6 @@ export class ViewModel {
             }
             $('#race-result').fadeIn(1000, 'linear');
         });
-    }
-
-    private FinalStandings_NextPage() {
-        this.FinalStandings_SetPageNumber(1);
-    }
-
-    private FinalStandings_PrevPage() {
-        this.FinalStandings_SetPageNumber(-1);
-    }
-
-    private FinalStandings_SetPageNumber(pageOffset: number) {
-        if (this.Tournament().FinalStandings != null && this.Tournament().FinalStandings.length > 0) {
-            console.log(pageOffset);
-            console.log($('#final-standings-container'));
-//            $('#final-standings-container').fadeOut('fast', 'swing', () => {
-                console.log('A');
-                this.CurrentFinalStandingsPage = (this.CurrentFinalStandingsPage + pageOffset) % this.Tournament().FinalStandings.length;
-                console.log(this.CurrentFinalStandingsPage);
-                this.CurrentFinalStandingsPageInfo(this.Tournament().FinalStandings[this.CurrentFinalStandingsPage]);
-                console.log(this.CurrentFinalStandingsPageInfo());
-//                $('#standings-container').fadeIn('fast', 'swing');
-//            });
-        }
     }
 
     private SetNextStandingsPage(buttonPressed: boolean) {
@@ -212,106 +154,19 @@ export class ViewModel {
     }
 
     private UpdateGroupStandings() {
-        this.LaneStats(this.BuildLaneStats());
         var pageInfo = this.StandingsPages[this.CurrentStandingsPage];
         var group = this.Tournament().Groups[pageInfo.GroupNumber];
         if (group == null || group.Cars == null) {
             return [];
         }
-        var results = this.RaceResultsFor(group);
-        var standings = Enumerable.From(results)
-            .Where((r: GroupStandingsRow) => pageInfo.GroupClassName == null || r.Car.Class == pageInfo.GroupClassName)
-            .OrderByDescending((r) => r.Points)
-            .ToArray();
+        var groupName = pageInfo.GroupName + (pageInfo.GroupClassName == null ? "" : " - " + pageInfo.GroupClassName);
 
-        var lastPoints = -1;
-        var lastPlaceAssigned = -1;
-        for (var i = 0; i < standings.length; i++) {
-            var row = standings[i];
-            if (row.Points == lastPoints) {
-                row.Place = lastPlaceAssigned;
-            }
-            else {
-                row.Place = i + 1;
-                lastPoints = row.Points;
-                lastPlaceAssigned = row.Place;
-            }
-        }
-
-        var standings = Enumerable.From(standings)
-            .OrderByDescending((r: GroupStandingsRow) => r.Points)
-            .ThenByDescending((r: GroupStandingsRow) => r.RacesRemaining)
-            .ThenByDescending((r: GroupStandingsRow) => r.FirstPlaceFinishes)
-            .ThenByDescending((r: GroupStandingsRow) => r.SecondPlaceFinishes)
-            .ThenByDescending((r: GroupStandingsRow) => r.ThirdPlaceFinishes)
-            .ThenByDescending((r: GroupStandingsRow) => r.FourthPlaceFinishes)
-            .Skip(pageInfo.PlaceIndex)
-            .Take(this.StandingsPageSize)
-            .ToArray();
-        this.GroupStandings(standings);
+        var standings = Enumerable.From(this.Tournament().Standings)
+            .First((s: pinewoodderby.GroupStandings) => s.Group == groupName);
+        var pageStandings = Enumerable.From(standings.StandingsRows)
+            .Skip(pageInfo.PlaceIndex).Take(10).ToArray();
+        this.GroupStandings(pageStandings);
         this.DisplayedGroup(group);
-    }
-
-    private RaceResultsFor(group: pinewoodderby.Group) {
-        var results = [];
-        var races = this.Tournament().Races;
-        group.Cars.forEach((c: pinewoodderby.Car) => {
-            var raceResults = Enumerable.From(races).SelectMany((r: pinewoodderby.Race) => [r.Car1, r.Car2, r.Car3, r.Car4]).ToArray();
-            var resultsWithCar = Enumerable.From(raceResults).Where((rr: pinewoodderby.RaceResult) => rr.Car.ID == c.ID).ToArray();
-            var result = new GroupStandingsRow();
-            result.Car = c;
-            result.TotalRaces = resultsWithCar.length;
-            result.FirstPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 1);
-            result.SecondPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 2);
-            result.ThirdPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 3);
-            result.FourthPlaceFinishes = Enumerable.From(resultsWithCar).Count((r: pinewoodderby.RaceResult) => r.Place == 4);
-            result.RacesRemaining = result.TotalRaces - result.FirstPlaceFinishes - result.SecondPlaceFinishes - result.ThirdPlaceFinishes - result.FourthPlaceFinishes;
-            result.Points = 4 * result.FirstPlaceFinishes + 3 * result.SecondPlaceFinishes + 2 * result.ThirdPlaceFinishes + 1 * result.FourthPlaceFinishes;
-            results.push(result);
-        });
-        return results;
-    }
-
-    private BuildLaneStats() {
-        var lane1 = new LaneStatsRow();
-        lane1.Lane = "Lane 1";
-        var lane2 = new LaneStatsRow();
-        lane2.Lane = "Lane 2";
-        var lane3 = new LaneStatsRow();
-        lane3.Lane = "Lane 3";
-        var lane4 = new LaneStatsRow();
-        lane4.Lane = "Lane 4";
-        var races = Enumerable.From(this.Tournament().Races)
-            .Where((x: pinewoodderby.Race) => this.IsRaceCompleted(x))
-            .ToArray();
-        races.forEach((r: pinewoodderby.Race) => {
-            this.AddLaneResult(r.Car1, r, lane1);
-            this.AddLaneResult(r.Car2, r, lane2);
-            this.AddLaneResult(r.Car3, r, lane3);
-            this.AddLaneResult(r.Car4, r, lane4);
-        });
-        return Enumerable.From([lane1, lane2, lane3, lane4])
-            .OrderByDescending((l: LaneStatsRow) => l.Points)
-            .ToArray();
-    }
-
-    private AddLaneResult(laneCar: pinewoodderby.RaceResult, race: pinewoodderby.Race, laneStats: LaneStatsRow) {
-        if (laneCar.Place == 1) {
-            laneStats.Points += 4;
-            laneStats.FirstPlaceFinishes++;
-        }
-        if (laneCar.Place == 2) {
-            laneStats.Points += 3;
-            laneStats.SecondPlaceFinishes++;
-        }
-        if (laneCar.Place == 3) {
-            laneStats.Points += 2;
-            laneStats.ThirdPlaceFinishes++;
-        }
-        if (laneCar.Place == 4) {
-            laneStats.Points += 1;
-            laneStats.FourthPlaceFinishes++;
-        }   
     }
 
     private ContainsCar(race: pinewoodderby.Race, car: pinewoodderby.Car) {
@@ -329,9 +184,8 @@ export class ViewModel {
     private DisplayedRaceResult = ko.observableArray<pinewoodderby.Race>([]);
     private DisplayedRaceNumber = 0;
     private DisplayedGroup = ko.observable<pinewoodderby.Group>();
-    private GroupStandings = ko.observableArray<GroupStandingsRow>([]);
+    private GroupStandings = ko.observableArray<pinewoodderby.GroupStandingsRow>([]);
     private CurrentStandingsPageInfo = ko.observable<StandingsPage>(null);
-    private CurrentFinalStandingsPageInfo = ko.observable<pinewoodderby.FinalStandingsGroup>(null);
     private StandingsPaused = ko.observable(false);
 
     private Lane1Place = ko.observable(0);
@@ -341,10 +195,9 @@ export class ViewModel {
     private SelectedLane: KnockoutObservable<number>;
 
     private CurrentStandingsPage = 0;
-    private CurrentFinalStandingsPage = 0;
     private StandingsPageSize = 10;
     private StandingsPages: StandingsPage[];
-    private LaneStats = ko.observableArray<LaneStatsRow>([]);
+    private LaneStats = ko.observableArray<pinewoodderby.LaneStat>([]);
 
     private CurrentRace_CarClick(result: pinewoodderby.RaceResult) {
         var lanePlace = this.LanePlace(result);
@@ -408,8 +261,11 @@ export class ViewModel {
 
         $('#current-race-container').css({ opacity: 0.5 });
 
+        console.log("saving");
         $.post(this.baseUrl + "api/derbymanager/savetournament", this.Tournament())
-            .done(() => {
+            .done((response: Common.ApiResponse<pinewoodderby.Tournament>) => {
+                this.LoadReturnedTournament(response.Content);
+                console.log("saved");
                 this.SetNextRace();
                 this.UpdateGroupStandings();
             });
@@ -441,12 +297,6 @@ export class ViewModel {
     private SetNextRace() {
         $('#current-race-container').fadeOut('fast', 'swing', () => {
             var nextRace = this.NextRaceFrom(this.Tournament().Races);
-            if (nextRace == null) {
-                nextRace = this.NextRaceFrom(this.Tournament().TiebreakerRaces);
-            }
-            if (nextRace == null) {
-                nextRace = this.NextRaceFrom(this.Tournament().FinalsRaces);
-            }
             this.CurrentRace(nextRace);
             this.CurrentRace_ClearPlaces();
             $('#current-race-container').fadeIn('fast', 'swing');
@@ -454,12 +304,6 @@ export class ViewModel {
         });
         $('#upcoming-races-container').fadeOut('fast', 'linear', () => {
             var nextFourRaces = this.NextFourRacesFrom(this.Tournament().Races);
-            if (nextFourRaces.length == 0) {
-                nextFourRaces = this.NextFourRacesFrom(this.Tournament().TiebreakerRaces);
-            }
-            if (nextFourRaces.length == 0) {
-                nextFourRaces = this.NextFourRacesFrom(this.Tournament().FinalsRaces);
-            }
             this.NextFourRaces(nextFourRaces);
             $('#upcoming-races-container').fadeIn('fast', 'linear');
         });
@@ -493,36 +337,6 @@ export class ViewModel {
         obj.Groups = [];
         obj.Races = [];
         return obj;
-    }
-}
-
-class GroupStandingsRow {
-    public Car: pinewoodderby.Car;
-    public FirstPlaceFinishes: number;
-    public SecondPlaceFinishes: number;
-    public ThirdPlaceFinishes: number;
-    public FourthPlaceFinishes: number;
-    public TotalRaces: number;
-    public RacesRemaining: number;
-    public Points: number;
-    public Place: number;
-}
-
-class LaneStatsRow {
-    public Lane: string;
-    public FirstPlaceFinishes: number;
-    public SecondPlaceFinishes: number;
-    public ThirdPlaceFinishes: number;
-    public FourthPlaceFinishes: number;
-    public TotalRaces: number;
-    public Points: number;
-
-    constructor() {
-        this.FirstPlaceFinishes = 0;
-        this.SecondPlaceFinishes = 0;
-        this.ThirdPlaceFinishes = 0; 
-        this.FourthPlaceFinishes = 0;
-        this.Points = 0;
     }
 }
 

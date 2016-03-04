@@ -23,26 +23,26 @@ namespace PinewoodDerby.Dto
             _groups.Add(new Tuple<Group, GroupRacesDefinition[]>(group, races));
         }
 
-        public void AddGroup(string folder, bool showClassStandings = false)
+        public void AddGroup(string folder, int rounds, bool showClassStandings = false)
         {
-            _AddGroup(folder, folder, showClassStandings);
+            _AddGroup(folder, folder, rounds, showClassStandings);
         }
 
-        public void AddGroup(string folder, string groupName, bool showClassStandings = false)
+        public void AddGroup(string folder, string groupName, int rounds, bool showClassStandings = false)
         {
-            _AddGroup(folder, groupName, showClassStandings);
+            _AddGroup(folder, groupName, rounds, showClassStandings);
         }
 
-        private void _AddGroup(string folder, string groupName = null, bool showClassStandings = false)
+        private void _AddGroup(string folder, string groupName, int rounds, bool showClassStandings = false, string round = "prelim")
         {
             groupName = groupName ?? folder;
             var cars = CsvParser.ParseArray<Car>(Path.Combine(_baseGroupDirectory, folder, "cars.csv"));
-            var races = CsvParser.ParseArray<GroupRacesDefinition>(Path.Combine(_baseGroupDirectory, folder, "races.csv"));
-            var group = new Group {Cars = cars.ToArray(), Name = groupName, ShowClassStandings = showClassStandings};
+            var races = RaceDefinitionSource.RaceDefinitions(cars.Count, rounds, null);
+            var group = new Group {Cars = cars.ToArray(), Name = groupName, ShowClassStandings = showClassStandings, Round = round};
             _groups.Add(new Tuple<Group, GroupRacesDefinition[]>(group, races.ToArray()));
         }
 
-        public Tournament Build()
+        public Tournament Build(string round = "prelim")
         {
             var races = new SortedList<double, Race>();
             var groups = new List<Group>();
@@ -61,6 +61,7 @@ namespace PinewoodDerby.Dto
                     var raceDef = group.Item2[i];
                     var race = new Race
                     {
+                        Round = round,
                         Group = group.Item1.Name,
                         Car1 = new RaceResult{Car = carsByNumber[raceDef.Lane1]},
                         Car2 = new RaceResult{Car = carsByNumber[raceDef.Lane2]},

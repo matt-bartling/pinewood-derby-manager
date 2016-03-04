@@ -54,6 +54,7 @@
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\IFromCsv.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="IntExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeScript\TypeScriptModule.cs" />
     <Compile Include="Web\Api\ApiResponse.cs" />

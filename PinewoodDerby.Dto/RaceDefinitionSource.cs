@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using PinewoodDerby.Dto;
 
-namespace PinewoodDerby.Controllers.API
+namespace PinewoodDerby.Dto
 {
     public static class RaceDefinitionSource
     {
@@ -30,14 +29,24 @@ namespace PinewoodDerby.Controllers.API
             }
 
             var raceDefPath = String.Format(@"C:\race-definitions\ppn-{0}x{1}x{2}.csv", cars, Lanes, rounds);
-            var raceDefLines = File.ReadAllLines(raceDefPath);
             var list = new List<GroupRacesDefinition>();
-            foreach (var raceDefLine in raceDefLines)
+            if (File.Exists(raceDefPath))
             {
-                var split = raceDefLine.Split('\t');
-                list.Add(CreateGroupRaceDefinition(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]),
-                    int.Parse(split[3]), int.Parse(split[4])));
+                var raceDefLines = File.ReadAllLines(raceDefPath);
+                foreach (var raceDefLine in raceDefLines)
+                {
+                    var split = raceDefLine.Split('\t');
+                    list.Add(CreateGroupRaceDefinition(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]),
+                        int.Parse(split[3]), int.Parse(split[4])));
+                }
+                return list.ToArray();
             }
+            var raceDefs = new PartialPerfectNGenerator().Build(cars, rounds);
+            for (int i = 0; i < raceDefs.Length; i++)
+            {
+                list.Add(CreateGroupRaceDefinition(i+1, raceDefs[i][0], raceDefs[i][1], raceDefs[i][2], raceDefs[i][3]));
+            }
+
             return list.ToArray();
         }
 

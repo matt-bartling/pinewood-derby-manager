@@ -34,7 +34,7 @@
             <div class="group-title">Lane Stats</div>
             <table class="table table-condensed">
                 <thead>
-                <th style="width: 200px;">Car</th>
+                <th style="width: 200px;">Lane</th>
                 <th style="width: 50px;">1st</th>
                 <th style="width: 50px;">2nd</th>
                 <th style="width: 50px;">3rd</th>
@@ -43,7 +43,7 @@
                 </thead>
                 <tbody data-bind="foreach: $root.LaneStats()">
                     <tr class="standings-row">
-                        <td data-bind="text: Lane"></td>
+                        <td data-bind="text: 'Lane ' + LaneNumber"></td>
                         <td data-bind="text: FirstPlaceFinishes"></td>
                         <td data-bind="text: SecondPlaceFinishes"></td>
                         <td data-bind="text: ThirdPlaceFinishes"></td>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Utils.Csv;
 using Utils.TypeScript;
@@ -11,34 +12,49 @@ namespace PinewoodDerby.Dto
         public string Name { get; set; }
         public Group[] Groups { get; set; }
         public Race[] Races { get; set; }
-        public Group[] TiebreakerGroups { get; set; }
-        public Race[] TiebreakerRaces { get; set; }
-        public Group[] FinalsGroups { get; set; }
-        public Race[] FinalsRaces { get; set; }
-        public FinalStandingsGroup[] FinalStandings { get; set; }
+        public GroupStandings[] Standings { get; set; }
+        public LaneStat[] LaneStats { get; set; }
 
-        public LaneStat[] LaneStats()
+        public Tournament()
         {
-            return new[]
-            {
-                BuildLaneStat(r => r.Car1, 1),
-                BuildLaneStat(r => r.Car2, 2),
-                BuildLaneStat(r => r.Car3, 3),
-                BuildLaneStat(r => r.Car4, 4),
-            };
+            Standings = new GroupStandings[0];
         }
+    }
 
-        private LaneStat BuildLaneStat(Func<Race, RaceResult> whichCar, int laneNumber)
+    [TypeScriptModule("pinewoodderby")]
+    public class GroupStandings
+    {
+        public string Round { get; set; }
+        public string Group { get; set; }
+        public GroupStandingsRow[] StandingsRows { get; set; }
+    }
+
+    [TypeScriptModule("pinewoodderby")]
+    public class GroupStandingsRow
+    {
+        public Car Car { get; set; }
+        public int FirstPlaceFinishes { get; set; }
+        public int SecondPlaceFinishes { get; set; }
+        public int ThirdPlaceFinishes { get; set; }
+        public int FourthPlaceFinishes { get; set; }
+        public int RacesRemaining { get; set; }
+        public int TotalRaces { get; set; }
+        public int Points { get; set; }
+        public int Place { get; set; }
+
+        public GroupStandingsRow Copy()
         {
-            var laneResults = Races.Select(whichCar).ToArray();
-            return new LaneStat
+            return new GroupStandingsRow
             {
-                LaneNumber = laneNumber,
-                FirstPlaceFinishes = laneResults.Count(r => r.Place == 1),
-                SecondPlaceFinishes = laneResults.Count(r => r.Place == 2),
-                ThirdPlaceFinishes = laneResults.Count(r => r.Place == 3),
-                FourthPlaceFinishes = laneResults.Count(r => r.Place == 4),
-                Points = laneResults.Sum(r => r.Points),
+                Car = Car,
+                FirstPlaceFinishes = FirstPlaceFinishes,
+                SecondPlaceFinishes = SecondPlaceFinishes,
+                ThirdPlaceFinishes = ThirdPlaceFinishes,
+                FourthPlaceFinishes = FourthPlaceFinishes,
+                TotalRaces = TotalRaces,
+                RacesRemaining = RacesRemaining,
+                Points = Points,
+                Place = Place,
             };
         }
     }
@@ -47,6 +63,8 @@ namespace PinewoodDerby.Dto
     public class Group
     {
         public string Name { get; set; }
+        public string Round { get; set; }
+        public string TiebreakGroup { get; set; }
         public Car[] Cars { get; set; }
         public bool ShowClassStandings { get; set; }
     }
@@ -54,6 +72,7 @@ namespace PinewoodDerby.Dto
     [TypeScriptModule("pinewoodderby")]
     public class Race
     {
+        public string Round { get; set; }
         public string Group { get; set; }
         public int RaceNumber { get; set; }
         public RaceResult Car1 { get; set; }
@@ -102,8 +121,21 @@ namespace PinewoodDerby.Dto
             Name = strings[3];
             Class = strings.Length > 4 ? strings[4] : "";
         }
+
+        public Car Copy()
+        {
+            return new Car
+            {
+                Number = Number,
+                ID = ID,
+                Builder = Builder,
+                Name = Name,
+                Class = Class
+            };
+        }
     }
 
+    [TypeScriptModule("pinewoodderby")]
     public class LaneStat
     {
         public int LaneNumber { get; set; }
