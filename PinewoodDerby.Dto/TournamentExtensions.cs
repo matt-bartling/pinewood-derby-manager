@@ -158,39 +158,54 @@ namespace PinewoodDerby.Dto
 
                 foreach (var classGroup in resultsByClass)
                 {
-                    var maxPoints = classGroup.Max(r => r.Points);
-                    var carsWithMaxPoints = classGroup.Where(r => r.Points == maxPoints).ToArray();
-                    var baseGroup = g.ShowClassStandings ? classGroup.Key : g.Name;
-                    if (carsWithMaxPoints.Count() > 1 && !tournament.Groups.Any(_g => _g.TiebreakGroup == baseGroup))
+                    var take = g.Round == "prelim" ? 3 : 1;
+                    var maxPointList = classGroup.OrderByDescending(r => r.Points).Take(take).Select(r => r.Points).Distinct().ToArray();
+                    for (var i = 0; i < maxPointList.Length; i++)
                     {
-                        int i = 1;
-                        var tiedCars =
-                            carsWithMaxPoints.Select(
-                                c =>
-                                    new Car
-                                    {
-                                        Builder = c.Car.Builder,
-                                        Class = c.Car.Class,
-                                        ID = c.Car.ID,
-                                        Name = c.Car.Name,
-                                        Number = i++
-                                    }).ToList();
-                        var raceDef = RaceDefinitionSource.RaceDefinitions(tiedCars.Count(), 1, laneStats);
-                        while (tiedCars.Count() < 4)
-                        {
-                            byeCounter++;
-                            var carId = "BYE" + byeCounter;
-                            tiedCars.Add(new Car { Builder = carId, Name = carId, ID = carId, Number = i });
-                            i++;
-                        }
-                        var name = string.Join("-", baseGroup.Split('-').First(), roundName);
-                        var tiedGroup = new Group { Name = name, Cars = tiedCars.ToArray(), Round = roundName, TiebreakGroup = baseGroup};
-                        tiebreakerTournamentBuilder.AddGroup(tiedGroup, raceDef);
+                        var maxPoints = maxPointList[i];
+                        byeCounter = BuildTiebreakerRacesForPointLevel(tournament, classGroup.Key, classGroup, maxPoints, g, laneStats,
+                            byeCounter, roundName, tiebreakerTournamentBuilder, i + 1);
                     }
                 }
             }
             var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
             tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
+        }
+
+        private static int BuildTiebreakerRacesForPointLevel(Tournament tournament, string classKey, IEnumerable<CarResult> classGroup, int maxPoints, Group g,
+            LaneStat[] laneStats, int byeCounter, string roundName, TournamentBuilder tiebreakerTournamentBuilder, int tiebreakerPlace)
+        {
+            var carsWithMaxPoints = classGroup.Where(r => r.Points == maxPoints).ToArray();
+            var baseGroup = g.ShowClassStandings ? classKey : g.Name;
+            if (carsWithMaxPoints.Count() > 1 && !tournament.Groups.Any(_g => _g.TiebreakGroup == baseGroup))
+            {
+                int i = 1;
+                var tiedCars =
+                    carsWithMaxPoints.Select(
+                        c =>
+                            new Car
+                            {
+                                Builder = c.Car.Builder,
+                                Class = c.Car.Class,
+                                ID = c.Car.ID,
+                                Name = c.Car.Name,
+                                Number = i++
+                            }).ToList();
+                var raceDef = RaceDefinitionSource.RaceDefinitions(tiedCars.Count(), 1, laneStats);
+                while (tiedCars.Count() < 4)
+                {
+                    byeCounter++;
+                    var carId = "BYE" + byeCounter;
+                    tiedCars.Add(new Car {Builder = carId, Name = carId, ID = carId, Number = i});
+                    i++;
+                }
+                var name = tiebreakerPlace == 1
+                    ? string.Join("-", baseGroup.Split('-').First(), roundName)
+                    : string.Join("-", baseGroup.Split('-').First()+":"+tiebreakerPlace, roundName);
+                var tiedGroup = new Group {Name = name, Cars = tiedCars.ToArray(), Round = roundName, TiebreakGroup = baseGroup};
+                tiebreakerTournamentBuilder.AddGroup(tiedGroup, raceDef);
+            }
+            return byeCounter;
         }
 
         private static IEnumerable<IGrouping<string, CarResult>> ResultsByClass(Tournament tournament, Group g)

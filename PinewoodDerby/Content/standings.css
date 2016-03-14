@@ -7,7 +7,7 @@
   background-color: #0d0d0d;
   border: solid 5px #1a1a1a;
   text-align: center;
-  font-size: small;
+  font-size: large;
   color: white;
 }
 #standings table {
@@ -20,7 +20,7 @@
   text-align: center;
 }
 #standings .group-title {
-  font-size: medium;
+  font-size: large;
   font-weight: bold;
   margin: 10px;
 }

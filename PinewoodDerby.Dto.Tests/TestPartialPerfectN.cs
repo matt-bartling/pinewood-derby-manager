@@ -74,11 +74,11 @@ namespace PinewoodDerby.Dto.Tests
                 {
                     try
                     {
-                        if (cars == 9 && rounds == 2)
+                        var races = builder.Build(cars, rounds);
+                        if (cars == 23 && rounds == 2)
                         {
                             Console.Write("");
                         }
-                        var races = builder.Build(cars, rounds);
                         var raceList = GetRaceList(cars);
                         foreach (var race in races)
                         {
@@ -89,6 +89,10 @@ namespace PinewoodDerby.Dto.Tests
                                     if (i != j)
                                     {
                                         var key = Key(race[i], race[j]);
+                                        if (!raceList.ContainsKey(key))
+                                        {
+                                            Console.Write("");
+                                        }
                                         raceList[key]++;
                                     }
                                 }

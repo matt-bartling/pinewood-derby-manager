@@ -101,13 +101,13 @@
   background-color: #00ff00;
 }
 #current-race .race .lane-2 {
-  background-color: #b3b3ff;
+  background-color: #8080ff;
 }
 #current-race .race .lane-3 {
   background-color: #ffff33;
 }
 #current-race .race .lane-4 {
-  background-color: #ffb3b3;
+  background-color: #ff6666;
 }
 #current-race .control {
   position: relative;

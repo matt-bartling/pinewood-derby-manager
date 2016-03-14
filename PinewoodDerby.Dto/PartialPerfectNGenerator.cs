@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utils;
 
 namespace PinewoodDerby.Dto
 {
@@ -16,7 +17,7 @@ namespace PinewoodDerby.Dto
             {21, new []{4, 5, 10}},
             {22, new []{4, 5, 7}},
             {23, new []{4, 7, 10}},
-            {26, new []{1, 3, 13}},
+            {26, new []{5, 6, 8}},
             {27, new []{4, 5, 6}},
             {28, new []{4, 5, 6}},
         };
@@ -38,10 +39,10 @@ namespace PinewoodDerby.Dto
             {20, new []{12, 18, 3}},
             {21, new []{5, 13, 7}},
             {22, new []{8, 12, 21}},
-            {23, new []{1, 23, 1}},
+            {23, new []{3, 5, 14}},
             {24, new []{1, 5, 8}},
             {25, new []{1, 5, 8}},
-            {26, new []{5, 6, 8}},
+            {26, new []{1, 3, 13}},
             {27, new []{7, 19, 25}},
             {28, new []{7, 20, 26}},
         };
@@ -78,22 +79,7 @@ namespace PinewoodDerby.Dto
             var totalRaces = races.Count;
             for (int i = 1; i <= totalRaces; i++)
             {
-                var minRaces = racesRun.Min(e => e.Value);
-                var maxRaces = racesRun.Max(e => e.Value);
-                int[] nextRace = null;
-                int raceDiff = 0;
-                while (nextRace == null)
-                {
-                    for (int j = 0; j < races.Count; j++)
-                    {
-                        if (IsThisRaceOk(races[j], lastRace, racesRun, minRaces, raceDiff))
-                        {
-                            nextRace = races[j];
-                            break;
-                        }
-                    }
-                    raceDiff++;
-                }
+                var nextRace = GetNextRace(races, lastRace, racesRun);
                 orderedRaces.Add(nextRace);
                 races.Remove(nextRace);
                 lastRace = nextRace;
@@ -171,6 +157,26 @@ namespace PinewoodDerby.Dto
                 races.Add(racers);
             }
             return races;
+        }
+
+        private static int[] GetNextRace(IEnumerable<int[]> racesLeft, int[] lastRace, Dictionary<int, int> racesRun)
+        {
+            return racesLeft.MaxR(r => RaceScore(r, lastRace, racesRun));
+        }
+
+        private static double RaceScore(int[] raceNumbers, int[] lastRace, Dictionary<int, int> racesRun)
+        {
+            var score = 0.0;
+            var maxRacesRun = racesRun.Values.Max();
+            foreach (var raceNumber in raceNumbers)
+            {
+                score += Math.Pow(maxRacesRun - racesRun[raceNumber], 2);
+                if (lastRace != null && lastRace.Contains(raceNumber))
+                {
+                    score -= 10;
+                }
+            }
+            return score;
         }
 
         private static bool IsThisRaceOk(int[] race, int[] lastRace, Dictionary<int, int> racesRun, int minRaces,
