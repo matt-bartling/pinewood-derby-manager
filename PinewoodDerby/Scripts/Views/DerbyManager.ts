@@ -16,7 +16,7 @@ export class ViewModel {
         $(document).ready(() => {
             ko.applyBindings(this, document.getElementById('mainContent'));
             this.baseUrl = baseUrl;
-            this.LoadTournament('test-2016');
+            this.LoadTournament('test-2017');
         });
         $(document).keypress((event) => {
             var place = event.charCode - 48;
@@ -304,6 +304,7 @@ export class ViewModel {
         });
         $('#upcoming-races-container').fadeOut('fast', 'linear', () => {
             var nextFourRaces = this.NextFourRacesFrom(this.Tournament().Races);
+            console.log(nextFourRaces);
             this.NextFourRaces(nextFourRaces);
             $('#upcoming-races-container').fadeIn('fast', 'linear');
         });
@@ -313,7 +314,7 @@ export class ViewModel {
         return Enumerable.From(races)
             .Where((r: pinewoodderby.Race) => !this.IsRaceCompleted(r))
             .OrderBy((r: pinewoodderby.Race) => r.RaceNumber)
-            .Skip(1).Take(4)
+            .Skip(1).Take(2)
             .ToArray();
     }
 

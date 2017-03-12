@@ -3,7 +3,7 @@
         <!-- ko foreach: DisplayedRaceResult() -->
         <div class="race" data-bin="with: DisplayedRaceResult(), visible: DisplayedRaceResult() != null">
             <!-- ko if: $root.IsRaceCompleted($data) -->
-            <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span> / Final</div>
+            <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - <span data-bind="text: Group"></span> / Final</div>
             <!-- ko foreach: Enumerable.From($root.RaceResults($data)).OrderBy(function (rr) { return rr.Place; } ).ToArray() -->
             <div class="place-1 car" data-bind="visible: $data.Place == 1">1st: @Result_Car()</div>
             <div class="place-2 car" data-bind="visible: $data.Place == 2">2nd: @Result_Car()</div>

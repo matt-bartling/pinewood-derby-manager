@@ -15,7 +15,7 @@ namespace PinewoodDerby.Controllers.API
     {
         [HttpGet]
         [Route("gettournament")]
-        public HttpResponseMessage GetTournament(string name = "test-2016")
+        public HttpResponseMessage GetTournament(string name = "2017")
         {
             var tournament =
                 JsonConvert.DeserializeObject<Tournament>(File.ReadAllText(@"C:\Tournaments\{0}\tournament.json".FormatWith(name)));

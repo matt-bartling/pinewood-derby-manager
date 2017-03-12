@@ -3,10 +3,10 @@
         <!-- ko if: CurrentRace() != null-->
         <div class="race" data-bind="with: CurrentRace()">
             <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - Group: ' + Group"></div>
-            <div class="lane-1" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
-            <div class="lane-2" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
-            <div class="lane-3" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
-            <div class="lane-4" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
+            <div class="lane-1 car" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
+            <div class="lane-2 car" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
+            <div class="lane-3 car" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
+            <div class="lane-4 car" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
         </div>
         <div class="control">
             <button class="clear-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_ClearPlaces(); }">Clear</button>
@@ -20,21 +20,13 @@
             All Races complete
         </div>
         <!-- /ko -->
-@*        <!-- ko if: CurrentRace() == null && (($root.Ties().length > 0 && $root.Tournament().TiebreakerRaces.length > 0) || $root.Ties().Length == 0) && $root.Tournament().FinalsRaces.length == 0  -->*@
-@*        <div class="race">*@
-@*            <button class="btn-success btn-lg btn" data-bind="click: function() { $root.CreateFinalsRaces(); }">Create Finals</button>*@
-@*        </div>*@
-@*        <!-- /ko -->*@
-@*        <!-- ko if: CurrentRace() == null && $root.Tournament().FinalsRaces != null && $root.Tournament().FinalsRaces.length > 0 -->*@
-@*        <div data-bind="text: 'All Races Complete'"></div>*@
-@*        <!-- /ko -->*@
     </div>
 </div>
 
 @helper CurrentRaceCar()
 {
-    <div data-bind="text: Car.ID + ' - ' + Car.Builder"></div>
-    <div data-bind="text: Car.Name"></div>
+    <div class="car-builder" data-bind="text: Car.ID + ' - ' + Car.Builder"></div>
+    <div class="car-title" data-bind="text: Car.Name"></div>
     <!-- ko with: $root.LanePlace($data) -->
     <div class="race-place-first" data-bind="visible: $data == 1"><span>1st</span></div>
     <div class="race-place-second" data-bind="visible: $data == 2"><span>2nd</span></div>

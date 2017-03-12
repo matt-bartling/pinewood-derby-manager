@@ -13,7 +13,7 @@
   margin-right: 5px;
   border: 2px solid #333333;
   height: 45px;
-  font-size: 12px;
+  font-size: 10pt;
   font-weight: bold;
   border-radius: 10px;
 }
@@ -33,29 +33,31 @@
   color: black;
   border: solid 2px black;
   border-radius: 10px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #race-results .race .place-1 {
-  background-color: #ffd700;
+  background-color: gold;
 }
 #race-results .race .place-2 {
-  background-color: #c0c0c0;
+  background-color: silver;
 }
 #race-results .race .place-3 {
   background-color: #ccac00;
 }
 #race-results .race .place-4 {
-  background-color: #00bfff;
+  background-color: deepskyblue;
 }
 #race-results .race .lane-1 {
-  background-color: #00ff00;
+  background-color: #80ff80;
 }
 #race-results .race .lane-2 {
-  background-color: #8080ff;
+  background-color: #ccccff;
 }
 #race-results .race .lane-3 {
-  background-color: #ffff33;
+  background-color: #ffff99;
 }
 #race-results .race .lane-4 {
-  background-color: #ff6666;
+  background-color: #ffcccc;
 }
 /*# sourceMappingURL=race-results.css.map */

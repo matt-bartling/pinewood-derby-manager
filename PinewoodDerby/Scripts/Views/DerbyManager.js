@@ -32,7 +32,7 @@ define(["require", "exports"], function(require, exports) {
             $(document).ready(function () {
                 ko.applyBindings(_this, document.getElementById('mainContent'));
                 _this.baseUrl = baseUrl;
-                _this.LoadTournament('test-2016');
+                _this.LoadTournament('2017');
             });
             $(document).keypress(function (event) {
                 var place = event.charCode - 48;
@@ -301,6 +301,7 @@ define(["require", "exports"], function(require, exports) {
             });
             $('#upcoming-races-container').fadeOut('fast', 'linear', function () {
                 var nextFourRaces = _this.NextFourRacesFrom(_this.Tournament().Races);
+                console.log(nextFourRaces);
                 _this.NextFourRaces(nextFourRaces);
                 $('#upcoming-races-container').fadeIn('fast', 'linear');
             });
@@ -312,7 +313,7 @@ define(["require", "exports"], function(require, exports) {
                 return !_this.IsRaceCompleted(r);
             }).OrderBy(function (r) {
                 return r.RaceNumber;
-            }).Skip(1).Take(4).ToArray();
+            }).Skip(1).Take(2).ToArray();
         };
 
         ViewModel.prototype.NextRaceFrom = function (races) {

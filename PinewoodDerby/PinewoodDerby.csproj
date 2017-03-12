@@ -227,6 +227,12 @@
     <Content Include="Content\images\Next.png" />
     <Content Include="Content\images\prev.jpg" />
     <Content Include="Content\images\right-arrow.ico" />
+    <Content Include="Content\navbar.css">
+      <DependentUpon>navbar.less</DependentUpon>
+    </Content>
+    <Content Include="Content\navbar.min.css">
+      <DependentUpon>navbar.css</DependentUpon>
+    </Content>
     <Content Include="Content\Site.min.css">
       <DependentUpon>Site.css</DependentUpon>
     </Content>
@@ -308,6 +314,10 @@
     <Content Include="Content\double-elimination-tournament.less" />
     <Content Include="Content\double-elimination-tournament.css.map">
       <DependentUpon>double-elimination-tournament.css</DependentUpon>
+    </Content>
+    <Content Include="Content\navbar.less" />
+    <Content Include="Content\navbar.css.map">
+      <DependentUpon>navbar.css</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\jqplot\changes.txt" />

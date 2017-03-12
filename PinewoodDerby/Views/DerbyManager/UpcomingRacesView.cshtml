@@ -4,10 +4,10 @@
         <!-- ko foreach: NextFourRaces() -->
         <div class="race">
             <div class="race-title">Race #<span data-bind="text: RaceNumber"></span> - Group: <span data-bind="text: Group"></span></div>
-            <div class="lane-1" data-bind="with: Car1">Lane 1: @Result_Car()</div>
-            <div class="lane-2" data-bind="with: Car2">Lane 2: @Result_Car()</div>
-            <div class="lane-3" data-bind="with: Car3">Lane 3: @Result_Car()</div>
-            <div class="lane-4" data-bind="with: Car4">Lane 4: @Result_Car()</div>
+            <div class="lane-1 car" data-bind="with: Car1">@Result_Car()</div>
+            <div class="lane-2 car" data-bind="with: Car2">@Result_Car()</div>
+            <div class="lane-3 car" data-bind="with: Car3">@Result_Car()</div>
+            <div class="lane-4 car" data-bind="with: Car4">@Result_Car()</div>
         </div>
         <!-- /ko -->
     </div>
