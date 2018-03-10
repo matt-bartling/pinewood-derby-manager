@@ -225,9 +225,20 @@ export class ViewModel {
             return;
         }
 
-        var lastPlaceAssigned = Enumerable.From(this.LanePlaces()).Count((lp: number) => lp > 0);
-        var nextPlace = lastPlaceAssigned + 1;
-        this.SelectedLane(nextPlace);
+        var nextPlaceToAssign = this.NextPlaceToAssign();
+        this.SelectedLane(nextPlaceToAssign);
+    }
+
+    private NextPlaceToAssign() {
+        if (this.LanePlaces().none(1)) {
+            return 1;
+        } else if (this.LanePlaces().none(2)) {
+            return 2;
+        } else if (this.LanePlaces().none(3)) {
+            return 3;
+        } else {
+            return 4;
+        }
     }
 
     private LanePlace(raceResult: pinewoodderby.RaceResult) {
@@ -261,7 +272,7 @@ export class ViewModel {
         return [race.Car1, race.Car2, race.Car3, race.Car4];
     }
 
-    private CurrentRace_ClearPlaces() {
+    private CurrentRace_ClearPlaces(race: pinewoodderby.Race) {
         this.Lane1Place(0);
         this.Lane2Place(0);
         this.Lane3Place(0);
@@ -280,7 +291,7 @@ export class ViewModel {
         $.post(this.baseUrl + "api/derbymanager/savetournament", this.Tournament())
             .done((response: Common.ApiResponse<pinewoodderby.Tournament>) => {
                 this.LoadReturnedTournament(response.Content);
-                console.log("saved");
+                console.log("saved 2");
                 this.SetNextRace();
                 this.UpdateGroupStandings();
             });
@@ -302,18 +313,23 @@ export class ViewModel {
         if (race == null) {
             return;
         }
-        this.Lane1Place(race.Car1.Place);
-        this.Lane2Place(race.Car2.Place);
-        this.Lane3Place(race.Car3.Place);
-        this.Lane4Place(race.Car4.Place);
+        this.SetCurrentRaceTo(race);
+    }
+
+    private SetCurrentRaceTo(race: pinewoodderby.Race) {
+        if (race != null) {
+            this.Lane1Place(race.Car1.Place);
+            this.Lane2Place(race.Car2.Place);
+            this.Lane3Place(race.Car3.Place);
+            this.Lane4Place(race.Car4.Place);
+        }
         this.CurrentRace(race);
     }
 
     private SetNextRace() {
         $('#current-race-container').fadeOut('fast', 'swing', () => {
             var nextRace = this.NextRaceFrom(this.Tournament().Races);
-            this.CurrentRace(nextRace);
-            this.CurrentRace_ClearPlaces();
+            this.SetCurrentRaceTo(nextRace);
             $('#current-race-container').fadeIn('fast', 'swing');
             $('#current-race-container').css({ opacity: 1.0 });
         });

@@ -168,6 +168,18 @@ namespace PinewoodDerby.Dto
                     }
                     var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
 
+                    foreach (var race in tiebreakerTournament.Races)
+                    {
+                        foreach (var car in race.Cars())
+                        {
+                            if (car.IsBye())
+                            {
+                                car.Place = 4;
+                                car.Points = 1;
+                            }
+                        }
+                    }
+
                     tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
                 }
             }
@@ -309,6 +321,19 @@ namespace PinewoodDerby.Dto
                 }
                 groupResults[i].Place = place;
             }
+        }
+
+        public static IEnumerable<RaceResult> Cars(this Race race)
+        {
+            yield return race.Car1;
+            yield return race.Car2;
+            yield return race.Car3;
+            yield return race.Car4;
+        }
+
+        public static bool IsBye(this RaceResult raceResult)
+        {
+            return raceResult.Car.ID.StartsWith("BYE");
         }
     }
 

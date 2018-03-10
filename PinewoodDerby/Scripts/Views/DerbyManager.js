@@ -221,11 +221,20 @@ define(["require", "exports"], function(require, exports) {
                 return;
             }
 
-            var lastPlaceAssigned = Enumerable.From(this.LanePlaces()).Count(function (lp) {
-                return lp > 0;
-            });
-            var nextPlace = lastPlaceAssigned + 1;
-            this.SelectedLane(nextPlace);
+            var nextPlaceToAssign = this.NextPlaceToAssign();
+            this.SelectedLane(nextPlaceToAssign);
+        };
+
+        ViewModel.prototype.NextPlaceToAssign = function () {
+            if (this.LanePlaces().none(1)) {
+                return 1;
+            } else if (this.LanePlaces().none(2)) {
+                return 2;
+            } else if (this.LanePlaces().none(3)) {
+                return 3;
+            } else {
+                return 4;
+            }
         };
 
         ViewModel.prototype.LanePlace = function (raceResult) {
@@ -256,7 +265,7 @@ define(["require", "exports"], function(require, exports) {
             return [race.Car1, race.Car2, race.Car3, race.Car4];
         };
 
-        ViewModel.prototype.CurrentRace_ClearPlaces = function () {
+        ViewModel.prototype.CurrentRace_ClearPlaces = function (race) {
             this.Lane1Place(0);
             this.Lane2Place(0);
             this.Lane3Place(0);
@@ -275,7 +284,7 @@ define(["require", "exports"], function(require, exports) {
             console.log("saving");
             $.post(this.baseUrl + "api/derbymanager/savetournament", this.Tournament()).done(function (response) {
                 _this.LoadReturnedTournament(response.Content);
-                console.log("saved");
+                console.log("saved 2");
                 _this.SetNextRace();
                 _this.UpdateGroupStandings();
             });
@@ -298,10 +307,16 @@ define(["require", "exports"], function(require, exports) {
             if (race == null) {
                 return;
             }
-            this.Lane1Place(race.Car1.Place);
-            this.Lane2Place(race.Car2.Place);
-            this.Lane3Place(race.Car3.Place);
-            this.Lane4Place(race.Car4.Place);
+            this.SetCurrentRaceTo(race);
+        };
+
+        ViewModel.prototype.SetCurrentRaceTo = function (race) {
+            if (race != null) {
+                this.Lane1Place(race.Car1.Place);
+                this.Lane2Place(race.Car2.Place);
+                this.Lane3Place(race.Car3.Place);
+                this.Lane4Place(race.Car4.Place);
+            }
             this.CurrentRace(race);
         };
 
@@ -309,8 +324,7 @@ define(["require", "exports"], function(require, exports) {
             var _this = this;
             $('#current-race-container').fadeOut('fast', 'swing', function () {
                 var nextRace = _this.NextRaceFrom(_this.Tournament().Races);
-                _this.CurrentRace(nextRace);
-                _this.CurrentRace_ClearPlaces();
+                _this.SetCurrentRaceTo(nextRace);
                 $('#current-race-container').fadeIn('fast', 'swing');
                 $('#current-race-container').css({ opacity: 1.0 });
             });
