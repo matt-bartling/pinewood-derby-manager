@@ -157,32 +157,54 @@ namespace PinewoodDerby.Dto
 
                 foreach (var classGroup in resultsByClass)
                 {
-                    var tiebreakerTournamentBuilder = new TournamentBuilder(tournament.Name + " - tiebreakers", "");
                     var take = g.Round == "prelim" ? 3 : 1;
-                    var maxPointList = classGroup.OrderByDescending(r => r.Points).Take(take).Select(r => r.Points).Distinct().ToArray();
+                    var maxPointList = classGroup.OrderByDescending(r => r.Points).Take(take).Select(r => r.Points).ToArray();
+                    var lastMaxPoints = 0;
                     for (var i = 0; i < maxPointList.Length; i++)
                     {
-                        var maxPoints = maxPointList[i];
-                        byeCounter = BuildTiebreakerRacesForPointLevel(tournament, classGroup.Key, classGroup, maxPoints, g, laneStats,
-                            byeCounter, roundName, tiebreakerTournamentBuilder, i + 1);
-                    }
-                    var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
-
-                    foreach (var race in tiebreakerTournament.Races)
-                    {
-                        foreach (var car in race.Cars())
+                        if (lastMaxPoints == maxPointList[i])
                         {
-                            if (car.IsBye())
+                            continue;
+                        }
+                        var tiebreakerTournamentBuilder = new TournamentBuilder(tournament.Name + " - tiebreakers", "");
+                        var maxPoints = lastMaxPoints = maxPointList[i];
+                        var tieBreakerPlace = CalculateTiebreakerPlace(g.Name, i + 1);
+                        byeCounter = BuildTiebreakerRacesForPointLevel(tournament, classGroup.Key, classGroup, maxPoints, g, laneStats,
+                            byeCounter, roundName, tiebreakerTournamentBuilder, tieBreakerPlace);
+                        var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
+                        foreach (var race in tiebreakerTournament.Races)
+                        {
+                            foreach (var car in race.Cars())
                             {
-                                car.Place = 4;
-                                car.Points = 1;
+                                if (car.IsBye())
+                                {
+                                    car.Place = 4;
+                                    car.Points = 1;
+                                }
                             }
                         }
-                    }
 
-                    tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
+                        tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
+                    }
                 }
             }
+        }
+
+        private static int CalculateTiebreakerPlace(string groupName, int place)
+        {
+            if (groupName.Contains("1st"))
+            {
+                return 1;
+            }
+            if (groupName.Contains("2nd"))
+            {
+                return 2;
+            }
+            if (groupName.Contains("3rd"))
+            {
+                return 3;
+            }
+            return place;
         }
 
         private static int BuildTiebreakerRacesForPointLevel(Tournament tournament, string classKey, IEnumerable<CarResult> classGroup, int maxPoints, Group g,
@@ -190,7 +212,7 @@ namespace PinewoodDerby.Dto
         {
             var carsWithMaxPoints = classGroup.Where(r => r.Points == maxPoints).ToArray();
             var baseGroup = g.ShowClassStandings ? classKey : g.Name;
-            if (carsWithMaxPoints.Count() > 1 && !tournament.Groups.Any(_g => _g.TiebreakGroup == baseGroup))
+            if (carsWithMaxPoints.Count() > 1 && !tournament.Groups.Any(_g => _g.TiebreakGroup == baseGroup && _g.TiebreakerPlace() == tiebreakerPlace))
             {
                 int i = 1;
                 var tiedCars =
@@ -213,7 +235,7 @@ namespace PinewoodDerby.Dto
                     i++;
                 }
                 var ordinal = tiebreakerPlace == 1 ? "1st" : tiebreakerPlace == 2 ? "2nd" : "3rd";
-                var name = string.Join(" - ", baseGroup.Split('-').First(), ordinal, roundName);
+                var name = string.Join(" - ", baseGroup.Split('-').First().Trim(), ordinal, roundName);
                 var tiedGroup = new Group {Name = name, Cars = tiedCars.ToArray(), Round = roundName, TiebreakGroup = baseGroup};
                 tiebreakerTournamentBuilder.AddGroup(tiedGroup, raceDef);
             }
@@ -334,6 +356,23 @@ namespace PinewoodDerby.Dto
         public static bool IsBye(this RaceResult raceResult)
         {
             return raceResult.Car.ID.StartsWith("BYE");
+        }
+
+        public static int TiebreakerPlace(this Group group)
+        {
+            if (group.Name.Contains("1st"))
+            {
+                return 1;
+            }
+            if (group.Name.Contains("2nd"))
+            {
+                return 2;
+            }
+            if (group.Name.Contains("3rd"))
+            {
+                return 3;
+            }
+            return 0;
         }
     }
 

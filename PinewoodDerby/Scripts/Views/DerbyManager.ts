@@ -273,10 +273,19 @@ export class ViewModel {
     }
 
     private CurrentRace_ClearPlaces(race: pinewoodderby.Race) {
-        this.Lane1Place(0);
-        this.Lane2Place(0);
-        this.Lane3Place(0);
-        this.Lane4Place(0);
+        var currentRace = this.CurrentRace();
+        if (currentRace == null || !this.IsBye(currentRace.Car1)) {
+            this.Lane1Place(0);
+        }
+        if (currentRace == null || !this.IsBye(currentRace.Car2)) {
+            this.Lane2Place(0);
+        }
+        if (currentRace == null || !this.IsBye(currentRace.Car3)) {
+            this.Lane3Place(0);
+        }
+        if (currentRace == null || !this.IsBye(currentRace.Car4)) {
+            this.Lane4Place(0);
+        }
     }
 
     private CurrentRace_Save() {
