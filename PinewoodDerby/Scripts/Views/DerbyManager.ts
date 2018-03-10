@@ -391,6 +391,10 @@ export class ViewModel {
         }
         return car.ID + " - " + car.Builder + " - " + car.Name;
     }
+
+    private IsBye(result: pinewoodderby.RaceResult) {
+        return result.Car.ID.startsWith("BYE");
+    }
 }
 
 class StandingsPage {

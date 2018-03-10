@@ -3,10 +3,10 @@
         <!-- ko if: CurrentRace() != null-->
         <div class="race" data-bind="with: CurrentRace()">
             <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - ' + Group"></div>
-            <div class="lane-1 car" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
-            <div class="lane-2 car" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
-            <div class="lane-3 car" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
-            <div class="lane-4 car" data-bind="with: Car4, click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
+            <div class="lane-1 car" data-bind="with: Car1, visible: !$root.IsBye(Car1), click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
+            <div class="lane-2 car" data-bind="with: Car2, visible: !$root.IsBye(Car2), click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
+            <div class="lane-3 car" data-bind="with: Car3, visible: !$root.IsBye(Car3), click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
+            <div class="lane-4 car" data-bind="with: Car4, visible: !$root.IsBye(Car4), click: function() { $root.CurrentRace_CarClick(Car4); }">@CurrentRaceCar()</div>
         </div>
         <div class="control">
             <button class="clear-button btn-lg btn" data-bind="click: function() { $root.CurrentRace_ClearPlaces(); }">Clear</button>

@@ -386,6 +386,10 @@ define(["require", "exports"], function(require, exports) {
             }
             return car.ID + " - " + car.Builder + " - " + car.Name;
         };
+
+        ViewModel.prototype.IsBye = function (result) {
+            return result.Car.ID.startsWith("BYE");
+        };
         return ViewModel;
     })();
     exports.ViewModel = ViewModel;
