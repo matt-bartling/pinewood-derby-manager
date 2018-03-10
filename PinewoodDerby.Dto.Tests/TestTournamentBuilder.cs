@@ -21,7 +21,7 @@ namespace PinewoodDerby.Dto.Tests
         [Test]
         public void Build()
         {
-            var tournamentName = "2017";
+            var tournamentName = "2018";
             var builder = new TournamentBuilder(tournamentName, @".\Races");
             builder.AddGroup("Scouts", 2, true);
             builder.AddGroup("Siblings", 1);
@@ -36,7 +36,7 @@ namespace PinewoodDerby.Dto.Tests
         [Test]
         public void FillInResults()
         {
-            var tournamentName = "2017";
+            var tournamentName = "2018";
             var tournamentFile = @"C:\Tournaments\{0}\tournament.json".FormatWith(tournamentName);
             var tournament = JsonConvert.DeserializeObject<Tournament>(File.ReadAllText(tournamentFile));
             var places = new[] { 1, 2, 3, 4 };

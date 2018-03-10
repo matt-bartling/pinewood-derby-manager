@@ -2,7 +2,7 @@
     <div id="current-race-container">
         <!-- ko if: CurrentRace() != null-->
         <div class="race" data-bind="with: CurrentRace()">
-            <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - Group: ' + Group"></div>
+            <div class="race-title" data-bind="text: 'Race #' + RaceNumber + ' - ' + Group"></div>
             <div class="lane-1 car" data-bind="with: Car1, click: function() { $root.CurrentRace_CarClick(Car1); }">@CurrentRaceCar()</div>
             <div class="lane-2 car" data-bind="with: Car2, click: function() { $root.CurrentRace_CarClick(Car2); }">@CurrentRaceCar()</div>
             <div class="lane-3 car" data-bind="with: Car3, click: function() { $root.CurrentRace_CarClick(Car3); }">@CurrentRaceCar()</div>
@@ -25,8 +25,8 @@
 
 @helper CurrentRaceCar()
 {
-    <div class="car-builder" data-bind="text: Car.ID + ' - ' + Car.Builder"></div>
-    <div class="car-title" data-bind="text: Car.Name"></div>
+    <div class="car-builder" data-bind="text: $root.DisplayIdAndCar(Car)"></div>
+    <div class="car-title" data-bind="text: $root.DisplayName(Car)"></div>
     <!-- ko with: $root.LanePlace($data) -->
     <div class="race-place-first" data-bind="visible: $data == 1"><span>1st</span></div>
     <div class="race-place-second" data-bind="visible: $data == 2"><span>2nd</span></div>

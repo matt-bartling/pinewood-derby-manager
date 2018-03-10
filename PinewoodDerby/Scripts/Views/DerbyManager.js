@@ -32,16 +32,31 @@ define(["require", "exports"], function(require, exports) {
             $(document).ready(function () {
                 ko.applyBindings(_this, document.getElementById('mainContent'));
                 _this.baseUrl = baseUrl;
-                _this.LoadTournament('2017');
+                _this.LoadTournament('2018');
             });
             $(document).keypress(function (event) {
-                var place = event.charCode - 48;
-                if (place < 1 || place > 4) {
-                    return;
+                var car = null;
+
+                if (event.charCode == 97) {
+                    car = _this.CurrentRace().Car1;
+                } else if (event.charCode == 115) {
+                    car = _this.CurrentRace().Car2;
+                } else if (event.charCode == 100) {
+                    car = _this.CurrentRace().Car3;
+                } else if (event.charCode == 102) {
+                    car = _this.CurrentRace().Car4;
                 }
 
-                if (_this.SelectedLane != null) {
-                    _this.SelectedLane(place);
+                if (car != null) {
+                    _this.CurrentRace_CarClick(car);
+                }
+
+                var place = event.charCode - 48;
+
+                if (place >= 1 && place <= 4) {
+                    if (_this.SelectedLane != null) {
+                        _this.SelectedLane(place);
+                    }
                 }
             });
             setInterval(function () {
@@ -335,6 +350,27 @@ define(["require", "exports"], function(require, exports) {
             obj.Groups = [];
             obj.Races = [];
             return obj;
+        };
+
+        ViewModel.prototype.DisplayName = function (car) {
+            if (car.Name.startsWith("BYE")) {
+                return "";
+            }
+            return car.Name;
+        };
+
+        ViewModel.prototype.DisplayIdAndCar = function (car) {
+            if (car.ID.startsWith("BYE")) {
+                return "";
+            }
+            return car.ID + " - " + car.Builder;
+        };
+
+        ViewModel.prototype.DisplayIdAndCarAndName = function (car) {
+            if (car.ID.startsWith("BYE")) {
+                return "";
+            }
+            return car.ID + " - " + car.Builder + " - " + car.Name;
         };
         return ViewModel;
     })();

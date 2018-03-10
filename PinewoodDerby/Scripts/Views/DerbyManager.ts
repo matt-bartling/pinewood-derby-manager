@@ -16,16 +16,31 @@ export class ViewModel {
         $(document).ready(() => {
             ko.applyBindings(this, document.getElementById('mainContent'));
             this.baseUrl = baseUrl;
-            this.LoadTournament('test-2017');
+            this.LoadTournament('2018');
         });
         $(document).keypress((event) => {
-            var place = event.charCode - 48;
-            if (place < 1 || place > 4) {
-                return;
+            var car = null;
+
+            if (event.charCode == 97) {
+                car = this.CurrentRace().Car1;
+            } else if (event.charCode == 115) {
+                car = this.CurrentRace().Car2;
+            } else if (event.charCode == 100) {
+                car = this.CurrentRace().Car3;
+            } else if (event.charCode == 102) {
+                car = this.CurrentRace().Car4;
             }
 
-            if (this.SelectedLane != null) {
-                this.SelectedLane(place);
+            if (car != null) {
+                this.CurrentRace_CarClick(car);
+            }
+
+            var place = event.charCode - 48;
+
+            if (place >= 1 && place <= 4) {
+                if (this.SelectedLane != null) {
+                    this.SelectedLane(place);
+                }
             }
         });
         setInterval(() => { this.SetNextResult(); }, 5000);
@@ -338,6 +353,27 @@ export class ViewModel {
         obj.Groups = [];
         obj.Races = [];
         return obj;
+    }
+
+    private DisplayName(car: pinewoodderby.Car) {
+        if (car.Name.startsWith("BYE")) {
+            return "";
+        }
+        return car.Name;
+    }
+
+    private DisplayIdAndCar(car: pinewoodderby.Car) {
+        if (car.ID.startsWith("BYE")) {
+            return "";
+        }
+        return car.ID + " - " + car.Builder;
+    }
+
+    private DisplayIdAndCarAndName(car: pinewoodderby.Car) {
+        if (car.ID.startsWith("BYE")) {
+            return "";
+        }
+        return car.ID + " - " + car.Builder + " - " + car.Name;
     }
 }
 

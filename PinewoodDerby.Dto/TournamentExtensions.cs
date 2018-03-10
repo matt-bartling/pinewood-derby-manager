@@ -118,7 +118,7 @@ namespace PinewoodDerby.Dto
             var tiebreakCount = 1;
             while (true)
             {
-                var tiebreakGroupName = string.Join("-", classGroup.Key, "Tiebreaker", tiebreakCount);
+                var tiebreakGroupName = string.Join(" - ", classGroup.Key, "1st", "Tie", tiebreakCount);
                 var tiebreakGroup = tournament.Groups.FirstOrDefault(g => g.Name == tiebreakGroupName);
                 if (tiebreakGroup == null)
                 {
@@ -142,15 +142,14 @@ namespace PinewoodDerby.Dto
             {
                 return;
             }
-            var tiebreakerRounds = tournament.Groups.Select(g => g.Round).Where(r => r != null && r.Contains("Tiebreaker"));
+            var tiebreakerRounds = tournament.Groups.Select(g => g.Round).Where(r => r != null && r.Contains("Tie"));
             var tiebreakerRound = 0;
             foreach (var round in tiebreakerRounds)
             {
                 var thisRound = round.Split('-').Last().ToInt();
                 tiebreakerRound = Math.Max(thisRound, tiebreakerRound);
             }
-            var roundName = "Tiebreaker-" + (tiebreakerRound + 1);
-            var tiebreakerTournamentBuilder = new TournamentBuilder(tournament.Name + " - tiebreakers", "");
+            var roundName = "Tie - " + (tiebreakerRound + 1);
             var laneStats = tournament.LaneStats;
             foreach (var g in tournament.Groups)
             {
@@ -158,6 +157,7 @@ namespace PinewoodDerby.Dto
 
                 foreach (var classGroup in resultsByClass)
                 {
+                    var tiebreakerTournamentBuilder = new TournamentBuilder(tournament.Name + " - tiebreakers", "");
                     var take = g.Round == "prelim" ? 3 : 1;
                     var maxPointList = classGroup.OrderByDescending(r => r.Points).Take(take).Select(r => r.Points).Distinct().ToArray();
                     for (var i = 0; i < maxPointList.Length; i++)
@@ -166,10 +166,11 @@ namespace PinewoodDerby.Dto
                         byeCounter = BuildTiebreakerRacesForPointLevel(tournament, classGroup.Key, classGroup, maxPoints, g, laneStats,
                             byeCounter, roundName, tiebreakerTournamentBuilder, i + 1);
                     }
+                    var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
+
+                    tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
                 }
             }
-            var tiebreakerTournament = tiebreakerTournamentBuilder.Build(roundName);
-            tournament.AddGroupsAndRaces(tiebreakerTournament.Groups, tiebreakerTournament.Races);
         }
 
         private static int BuildTiebreakerRacesForPointLevel(Tournament tournament, string classKey, IEnumerable<CarResult> classGroup, int maxPoints, Group g,
@@ -199,9 +200,8 @@ namespace PinewoodDerby.Dto
                     tiedCars.Add(new Car {Builder = carId, Name = carId, ID = carId, Number = i});
                     i++;
                 }
-                var name = tiebreakerPlace == 1
-                    ? string.Join("-", baseGroup.Split('-').First(), roundName)
-                    : string.Join("-", baseGroup.Split('-').First()+":"+tiebreakerPlace, roundName);
+                var ordinal = tiebreakerPlace == 1 ? "1st" : tiebreakerPlace == 2 ? "2nd" : "3rd";
+                var name = string.Join(" - ", baseGroup.Split('-').First(), ordinal, roundName);
                 var tiedGroup = new Group {Name = name, Cars = tiedCars.ToArray(), Round = roundName, TiebreakGroup = baseGroup};
                 tiebreakerTournamentBuilder.AddGroup(tiedGroup, raceDef);
             }
@@ -243,7 +243,7 @@ namespace PinewoodDerby.Dto
             var roundRaces = races.Where(r => r.Round == round).ToArray();
             foreach (var g in groups.Where(_g => _g.Round == round))
             {
-                var groupResults = g.Cars.Select(c =>
+                var groupResults = g.Cars.Where(c => !c.Name.StartsWith("BYE")).Select(c =>
                 {
                     var raceResults = roundRaces.SelectMany(r => r.Results()).Where(rr => rr.Car.ID == c.ID).ToArray();
                     var firstPlaceFinishes = raceResults.Count(rr => rr.Place == 1);
